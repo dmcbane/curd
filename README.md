@@ -13,15 +13,15 @@ terminals.
 
 ## Installation
 
-Use Git to clone this repository to the appropriate location within your $GOPATH
-($GOPATH/src/github.com/dmcbane/ or %GOPATH%\src\github.com\dmcbane\), change to
- the curd directory, then use go to install curd.
+Use Git to clone this repository to the appropriate location within your **```$GOPATH```**
+(```$GOPATH/src/github.com/dmcbane/``` or ```%GOPATH%\src\github.com\dmcbane\``` depending
+on your operating system), change to the curd directory, then use go to install curd.
 
      git clone https://github.com/dmcbane/curd.git
      cd curd
      go install
 
-Ensure that your $GOPATH/bin folder is in your path and then integrate curr into
+Ensure that your **```$GOPATH/bin```** folder is in your path and then integrate curr into
 your terminal as follows:
 
 **Windows Command Prompt:** Copy the curr.bat file into your $GOPATH/bin folder or
