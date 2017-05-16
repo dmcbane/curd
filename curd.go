@@ -17,6 +17,14 @@ const removeentrykey = "remove"
 const setentrykey = "set"
 const entrykey = "entry"
 
+var curdlog *log.Logger
+
+func init() {
+	// setup logger without date and time to be used
+	// for reporting errors to stderr more than logging
+	curdlog = log.New(os.Stderr, "curd: ", 0)
+}
+
 func main() {
 	args := getCommandlineArguments()
 	entries := readConfig((*args)[configfilekey])
@@ -37,7 +45,7 @@ func main() {
 		{
 			pwd, err := os.Getwd()
 			if err != nil {
-				log.Fatalln(err)
+				curdlog.Fatalln(err)
 			}
 			(*entries)[(*args)[entrykey]] = pwd
 			writeConfig((*args)[configfilekey], entries)
@@ -47,7 +55,7 @@ func main() {
 			if val, exists := (*entries)[(*args)[entrykey]]; exists {
 				fmt.Println(val)
 			} else {
-				log.Fatalf("%s does not exist in %s", (*args)[entrykey], (*args)[configfilekey])
+				curdlog.Fatalf("%s does not exist in %s", (*args)[entrykey], (*args)[configfilekey])
 			}
 		}
 	}
@@ -99,7 +107,7 @@ func readConfig(config_filename string) *map[string]string {
 		}
 
 		if err := scanner.Err(); err != nil {
-			log.Fatalln(err)
+			curdlog.Fatalln(err)
 		}
 	}
 	return &configuration
@@ -109,12 +117,12 @@ func writeConfig(config_filename string, configuration *map[string]string) error
 	file, err := os.Create(config_filename)
 	defer file.Close()
 	if err != nil {
-		log.Fatalln(err)
+		curdlog.Fatalln(err)
 	}
 	for k, v := range *configuration {
 		_, err := file.WriteString(fmt.Sprintf("%s| %s\n", k, v))
 		if err != nil {
-			log.Fatalln(err)
+			curdlog.Fatalln(err)
 		}
 	}
 	return nil
