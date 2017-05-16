@@ -1,6 +1,6 @@
 # CURD
 
-Change to one of a User's Recurrent Directories
+***Change to one of a User's Recurrent Directories***
 
 CURD allows you to quickly jump to a directory without having to type the entire
 path.  It is the latest evolution of a script that I have used for years to jump
@@ -11,7 +11,7 @@ with integration wrappers that make it easy to use from the Windows command
 prompt or Powershell, from the Mac Terminal, and from Unix/Linux bash or zsh
 terminals.
 
-Installation
+## Installation
 
 Use Git to clone this repository to the appropriate location within your $GOPATH
 ($GOPATH/src/github.com/dmcbane/ or %GOPATH%\src\github.com\dmcbane\), change to
@@ -24,23 +24,23 @@ Use Git to clone this repository to the appropriate location within your $GOPATH
 Ensure that your $GOPATH/bin folder is in your path and then integrate curr into
 your terminal as follows:
 
-Windows Command Prompt: Copy the curr.bat file into your $GOPATH/bin folder or
+**Windows Command Prompt:** Copy the curr.bat file into your $GOPATH/bin folder or
 anywhere else in your path.
 
-Windows Powershell: Copy the contents of the curr.ps1 file into your $profile
+**Windows Powershell:** Copy the contents of the curr.ps1 file into your $profile
 which will create a function that will change to the directory specified by
 curd.
 
      notepad curr.ps1 $profile
 
-Unix/Linux bash or zsh: copy the contents of curr.sh into your .bashrc or .zshrc
+**Unix/Linux bash or zsh:** copy the contents of curr.sh into your .bashrc or .zshrc
 to create a function that will change to the directory specified by curd.
 
-If you have difficulty getting it installed correctly, try checking out "How to
-Write Go Code" at https://golang.org/doc/code.html
+If you have difficulty getting it installed correctly, try checking out [How to
+Write Go Code](https://golang.org/doc/code.html)
 
 
-How It Works
+## How It Works
 
 Curd allows you to save the current working directory path by keyword or to the
 default. You can later retrieve the path by the same keyword or the default
@@ -65,7 +65,7 @@ or
 
      curr go
 
-Curd can be used as follows:
+## Usage
 
      curd [-c|l|r|s] [keyword] where omitting the c, l, r, and s flags retrieves
      the path specified by the keyword or the default if the keyword is omitted.
