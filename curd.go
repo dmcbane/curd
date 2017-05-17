@@ -63,10 +63,10 @@ func main() {
 
 func getCommandlineArguments() *map[string]string {
 	args := make(map[string]string)
-	configFile := flag.String("c", "", "select a configuration file to use instead of the default.")
-	listBool := flag.Bool("l", false, "list all values in the configuration file.")
-	removeBool := flag.Bool("r", false, "remove the value from the configuration file.")
-	setBool := flag.Bool("s", false, "set the value instead of retrieving it.")
+	configFile := flag.String("c", "", fmt.Sprintf("Select a configuration file to use instead of the default (~/%s).", default_config))
+	listBool := flag.Bool("l", false, "List all of the paths saved in the configuration file.")
+	removeBool := flag.Bool("r", false, "Remove the path specified by the keyword or the default path from the configuration file.")
+	setBool := flag.Bool("s", false, "Save the current directory to the specified keyword or the default.")
 	flag.Parse()
 	args[configfilekey] = getConfigurationFilePath(*configFile)
 	args[listentrykey] = fmt.Sprint(*listBool)

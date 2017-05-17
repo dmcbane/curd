@@ -71,10 +71,10 @@ or
      the path specified by the keyword or the default if the keyword is omitted.
 
      -c pathname - Select a configuration file to use instead of the default
-     (~.curdrc).
+        (~/.curdrc).
      -l - List all of the paths saved in the configuration file.
      -r [keyword] - Remove the path specified by the keyword or the default path
-     from the configuration file.
-     -s [keyword] - Set the the path specified by the keyword or the default
-     path.
+        from the configuration file.
+     -s [keyword] - Save the current directory to the specified keyword or the
+	    default.
 
