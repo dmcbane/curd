@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"sort"
 	"strings"
 )
 
@@ -16,6 +17,12 @@ const listentrykey = "list"
 const removeentrykey = "remove"
 const setentrykey = "set"
 const entrykey = "entry"
+
+type byKey []string
+
+func (k byKey) Len() int           { return len(k) }
+func (k byKey) Less(i, j int) bool { return k[i] < k[j] }
+func (k byKey) Swap(i, j int)      { k[i], k[j] = k[j], k[i] }
 
 var curdlog *log.Logger
 
@@ -32,8 +39,15 @@ func main() {
 	switch {
 	case (*args)[listentrykey] == "true":
 		{
-			for k, v := range *entries {
-				fmt.Printf("%s - %s\n", k, v)
+			keys := make([]string, len(*entries))
+			i := 0
+			for k, _ := range *entries {
+				keys[i] = k
+				i++
+			}
+			sort.Sort(byKey(keys))
+			for _, v := range keys {
+				fmt.Printf("%s - %s\n", v, (*entries)[v])
 			}
 		}
 	case (*args)[removeentrykey] == "true":
