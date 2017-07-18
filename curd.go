@@ -12,11 +12,12 @@ import (
 )
 
 const default_config = ".curdrc"
+const cleanentrieskey = "clean"
 const configfilekey = "configfile"
+const entrykey = "entry"
 const listentrykey = "list"
 const removeentrykey = "remove"
 const setentrykey = "set"
-const entrykey = "entry"
 
 type byKey []string
 
@@ -37,6 +38,15 @@ func main() {
 	entries := readConfig((*args)[configfilekey])
 
 	switch {
+	case (*args)[cleanentrieskey] == "true":
+		{
+			for k, v := range *entries {
+				if _, err := os.Stat(v); err != nil && os.IsNotExist(err) {
+					delete(*entries, k)
+					writeConfig((*args)[configfilekey], entries)
+				}
+			}
+		}
 	case (*args)[listentrykey] == "true":
 		{
 			keys := make([]string, len(*entries))
@@ -77,11 +87,13 @@ func main() {
 
 func getCommandlineArguments() *map[string]string {
 	args := make(map[string]string)
+	cleanBool := flag.Bool("n", false, "Cleanup entries for paths that don't exist.")
 	configFile := flag.String("c", "", fmt.Sprintf("Select a configuration file to use instead of the default (~/%s).", default_config))
 	listBool := flag.Bool("l", false, "List all of the paths saved in the configuration file.")
 	removeBool := flag.Bool("r", false, "Remove the path specified by the keyword or the default path from the configuration file.")
 	setBool := flag.Bool("s", false, "Save the current directory to the specified keyword or the default.")
 	flag.Parse()
+	args[cleanentrieskey] = fmt.Sprint(*cleanBool)
 	args[configfilekey] = getConfigurationFilePath(*configFile)
 	args[listentrykey] = fmt.Sprint(*listBool)
 	args[removeentrykey] = fmt.Sprint(*removeBool)
