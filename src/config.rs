@@ -1,43 +1,24 @@
 use std::collections::HashMap;
-use std::env;
-use std::path::Path;
 use std::fs::File;
+use std::path::Path;
 use std::io::BufRead;
 use std::io::BufReader;
 
 pub struct Config {
     pub configfile: String,
-    pub directories: HashMap<String, String>,
+    pub paths: HashMap<String, String>,
 }
 
 impl Config {
     pub fn new(args: &::args::Args) -> Result<Config, &'static str> {
-        let mut configuration_file = Config::get_default_config_filename();
-        if args.configfile.len() > 0 {
-            configuration_file = args.configfile.clone();
-        }
-        let dirs = Config::load_configuration(&configuration_file)?;
+        let configuration_file = args.configfile.clone();
+        let kv = Config::load_configuration(&configuration_file)?;
 
         //    return Err("not enough arguments");
         Ok(Config {
             configfile: String::from(configuration_file),
-            directories: dirs,
+            paths: kv,
         })
-    }
-
-    fn get_default_config_filename() -> String {
-        let home_dir = if cfg!(windows) {
-            env::var("USERPROFILE").unwrap_or(String::from("."))
-        } else {
-            env::var("HOME").unwrap_or(String::from("."))
-        };
-
-        let path = Path::new(&home_dir)
-            .join(".curdrc")
-            .into_os_string()
-            .into_string()
-            .unwrap();
-        path
     }
 
     fn load_configuration(filename: &str) -> Result<HashMap<String, String>, &'static str> {

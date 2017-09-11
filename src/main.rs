@@ -15,5 +15,5 @@ fn main() {
         process::exit(2);
     });
     println!("config.configfile: {}", config.configfile);
-    println!("config.directories: {:?}", config.directories);
+    println!("config.paths: {:?}", config.paths);
 }
