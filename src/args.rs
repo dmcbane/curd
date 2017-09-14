@@ -56,7 +56,6 @@ impl Args {
         // Gets a value for config if supplied by user, or defaults to "~/.curdrc"
         let default_config = Args::get_default_config_filename();
         let config = (matches.value_of("config").unwrap_or(&default_config)).to_string();
-        println!("Value for config: {}", config);
 
         let keyword = if matches.is_present("keyword") {
             matches.value_of("keyword").unwrap().to_string()
@@ -65,20 +64,15 @@ impl Args {
         } else if matches.is_present("save") {
             matches.value_of("save").unwrap().to_string()
         } else {
-            "".to_string()
+            "<default>".to_string()
         };
-        println!("Value for keyword: {}", keyword);
 
-        let read: bool = matches.is_present("keyword");
-        println!("Value for read: {}", read);
         let clean = matches.is_present("clean");
-        println!("Value for clean: {}", clean);
         let list = matches.is_present("list");
-        println!("Value for list: {}", list);
         let remove = matches.is_present("remove");
-        println!("Value for remove: {}", remove);
         let save = matches.is_present("save");
-        println!("Value for save: {}", save);
+        // reading if only keyword is provided or reading default if nothing is provided
+        let read: bool = matches.is_present("keyword") || (!clean && !list && !remove && !save);
 
         return Ok(Args {
             configfile: config,
