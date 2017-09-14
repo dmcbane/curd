@@ -17,7 +17,7 @@ pub struct Args {
 impl Args {
     pub fn new(args: &[String]) -> Result<Args, &'static str> {
         let matches = App::new("CURD - Change to a User's Recurring Directory")
-                          .version("1.0")
+                          .version("1.0.0")
                           .author("H. Dale McBane<h.dale.mcbane@gmail.com>")
                           .about("Allows a user to save and return to paths that they visit often.")
                           .arg(Arg::with_name("keyword")
