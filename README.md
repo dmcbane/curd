@@ -1,6 +1,6 @@
 # CURD
 
-***Change to one of a User's Recurrent Directories***
+***Change to a User's Recurring Directory***
 
 CURD allows you to quickly jump to a directory without having to type the entire
 path.  It is the latest evolution of a script that I have used for years to jump
