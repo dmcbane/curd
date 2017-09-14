@@ -3,6 +3,7 @@ use std::process;
 
 mod args;
 mod config;
+mod curd;
 
 fn main() {
     let arg_vec: Vec<String> = env::args().collect();
@@ -10,10 +11,9 @@ fn main() {
         println!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
-    let config = config::Config::new(&args).unwrap_or_else(|err| {
+    let config = config::Config::new(&args.configfile).unwrap_or_else(|err| {
         println!("Problem reading configuration file: {}", err);
         process::exit(2);
     });
-    println!("config.configfile: {}", config.configfile);
-    println!("config.paths: {:?}", config.paths);
+    curd::execute_command(&args, &config);
 }
