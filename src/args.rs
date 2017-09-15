@@ -7,11 +7,12 @@ use self::clap::{App, Arg, ArgGroup};
 pub struct Args {
     pub configfile: String,
     pub keyword: String,
-    pub list: bool,
     pub clean: bool,
+    pub list: bool,
+    pub read: bool,
     pub remove: bool,
     pub save: bool,
-    pub read: bool,
+    pub verbose: bool,
 }
 
 impl Args {
@@ -39,19 +40,24 @@ impl Args {
                           .arg(Arg::with_name("remove")
                                .short("r")
                                .long("remove")
-                               .value_name("KEYWORD")
-                               .help("Remove the path specified by the keyword or the default path from the configuration file.")
-                               .takes_value(true))
+                               .help("Remove the path specified by the keyword or the default path from the configuration file."))
                           .arg(Arg::with_name("save")
                                .short("s")
                                .long("save")
-                               .value_name("KEYWORD")
-                               .help("Save the current directory to the specified keyword or the default.")
-                               .takes_value(true))
-                          .group(ArgGroup::with_name("")
-                                 .args(&["keyword", "clean", "list", "remove", "save"]))
-                          .after_help("The 'keyword' argument, the 'clean' or 'list' flags, nor the 'remove' or 'save' options can be used together.  The 'config' option can be combined with all other flags, options, and args.")
+                               .help("Save the current directory to the specified keyword or the default."))
+                          .arg(Arg::with_name("verbose")
+                               .short("v")
+                               .long("verbose")
+                               .help("Display extra information."))
+                          .group(ArgGroup::with_name("One Action")
+                                 .args(&["clean", "list", "remove", "save"]))
+                          .group(ArgGroup::with_name("No Keyword")
+                                 .args(&["clean", "list", "keyword"]))
+                          .after_help("The 'clean' and 'list' flags cannot be combined with the keyword arg. The 'remove' or 'save' flags can be used alone or with the 'keyword' arg.  The 'config' option can be combined with all flags,and args.")
                           .get_matches_from(args);
+
+        // display debug information?
+        let verbose = matches.is_present("verbose");
 
         // Gets a value for config if supplied by user, or defaults to "~/.curdrc"
         let default_config = Args::get_default_config_filename();
@@ -59,10 +65,10 @@ impl Args {
 
         let keyword = if matches.is_present("keyword") {
             matches.value_of("keyword").unwrap().to_string()
-        } else if matches.is_present("remove") {
-            matches.value_of("remove").unwrap().to_string()
-        } else if matches.is_present("save") {
-            matches.value_of("save").unwrap().to_string()
+        // } else if matches.is_present("remove") {
+        //     matches.value_of("remove").unwrap().to_string()
+        // } else if matches.is_present("save") {
+        //     matches.value_of("save").unwrap().to_string()
         } else {
             "<default>".to_string()
         };
@@ -71,17 +77,31 @@ impl Args {
         let list = matches.is_present("list");
         let remove = matches.is_present("remove");
         let save = matches.is_present("save");
+
         // reading if only keyword is provided or reading default if nothing is provided
-        let read: bool = matches.is_present("keyword") || (!clean && !list && !remove && !save);
+        let read: bool = !clean && !list && !remove && !save;
+
+        if verbose {
+            println!("verbose: {}", verbose);
+            println!("default configuration file: {}", default_config);
+            println!("configuration file: {}", config);
+            println!("keyword: {}", keyword);
+            println!("clean: {}", clean);
+            println!("list: {}", list);
+            println!("remove: {}", remove);
+            println!("save: {}", save);
+            println!("read: {}", read);
+        };
 
         return Ok(Args {
             configfile: config,
             keyword: keyword,
-            list: list,
             clean: clean,
+            list: list,
+            read: read,
             remove: remove,
             save: save,
-            read: read,
+            verbose: verbose,
         });
     }
 

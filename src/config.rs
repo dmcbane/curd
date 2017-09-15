@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 use std::fs::File;
+use std::fs::OpenOptions;
 use std::io::BufRead;
 use std::io::BufReader;
+use std::io::BufWriter;
 use std::io::prelude::*;
 use std::io::Result as SIResult;
 use std::path::Path;
@@ -40,15 +42,17 @@ impl Config {
     }
 
     pub fn save_configuration<'a>(&'a self) -> SIResult<()> {
-        let path = Path::new(&self.configfile);
+        let file = OpenOptions::new().write(true).truncate(true).open(
+            &self.configfile,
+        )?;
+        let mut writer = BufWriter::new(&file);
 
-        // Open a file in write-only mode, returns `io::Result<File>`
-        let mut file = File::create(&path)?;
         // Write the paths to `file`
         for (key, value) in self.paths.iter() {
             let line = format!("{}| {}\n", key, value);
-            file.write_all(line.as_bytes())?;
-        };
+            writer.write(line.as_bytes())?;
+        }
+        writer.flush()?;
         Ok(())
     }
 }
