@@ -1,4 +1,4 @@
-package main
+package args
 
 import (
 	"flag"
@@ -7,30 +7,17 @@ import (
 	"path"
 )
 
-const cleanentrieskey = "clean"
-const configfilekey = "configfile"
-const entrykey = "entry"
-const listentrykey = "list"
-const removeentrykey = "remove"
-const setentrykey = "set"
-
-type byKey []string
-
-func (k byKey) Len() int           { return len(k) }
-func (k byKey) Less(i, j int) bool { return k[i] < k[j] }
-func (k byKey) Swap(i, j int)      { k[i], k[j] = k[j], k[i] }
-
 type Args struct {
-	configFile string
-	keyword    string
-	clean      bool
-	list       bool
-	read       bool
-	remove     bool
-	save       bool
+	ConfigFile string
+	Keyword    string
+	Clean      bool
+	List       bool
+	Read       bool
+	Remove     bool
+	Save       bool
 }
 
-func GetCommandlineArguments() *Args {
+func NewArgs() *Args {
 	var configFile, defaultConfig, usage string
 
 	defaultConfig = getDefaultConfigurationFilename()
@@ -73,7 +60,7 @@ func GetCommandlineArguments() *Args {
 	} else {
 		keyword = "<default>"
 	}
-	return &Args{configFile: configFile, keyword: keyword, clean: cleanBool, list: listBool, read: readBool, remove: removeBool, save: saveBool}
+	return &Args{ConfigFile: configFile, Keyword: keyword, Clean: cleanBool, List: listBool, Read: readBool, Remove: removeBool, Save: saveBool}
 }
 
 func getDefaultConfigurationFilename() string {
