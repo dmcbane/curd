@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"path"
 )
 
 const cleanentrieskey = "clean"
@@ -29,10 +31,10 @@ type Args struct {
 }
 
 func GetCommandlineArguments() *Args {
-	defaultConfig := getDefaultConfigurationFilename()
+	var configFile, defaultConfig, usage string
 
-	var configFile string
-	var usage string
+	defaultConfig = getDefaultConfigurationFilename()
+
 	usage = fmt.Sprintf("Select a configuration file to use instead of the default (~/%s).", defaultConfig)
 	flag.StringVar(&configFile, "c", "", usage)
 	flag.StringVar(&configFile, "-config", "", usage)
@@ -59,7 +61,7 @@ func GetCommandlineArguments() *Args {
 	flag.Parse()
 
 	if configFile == "" {
-		configFile = *defaultConfig
+		configFile = defaultConfig
 	}
 
 	readBool := !cleanBool && !listBool && !removeBool && !saveBool
@@ -74,6 +76,11 @@ func GetCommandlineArguments() *Args {
 	return &Args{configFile: configFile, keyword: keyword, clean: cleanBool, list: listBool, read: readBool, remove: removeBool, save: saveBool}
 }
 
-func getDefaultConfigurationFilename() *string {
+func getDefaultConfigurationFilename() string {
 	const default_config = ".curdrc"
+	var home string
+	if home = os.Getenv("HOME"); home == "" {
+		home = os.Getenv("USERPROFILE")
+	}
+	return path.Join(home, default_config)
 }
