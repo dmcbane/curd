@@ -5,6 +5,7 @@ import (
 	"github.com/docopt/docopt-go"
 	"os"
 	"path"
+	"sort"
 	"strings"
 )
 
@@ -16,7 +17,6 @@ type Args struct {
 	Read       bool
 	Remove     bool
 	Save       bool
-	Directory  string
 	Verbose    bool
 }
 
@@ -33,14 +33,13 @@ Usage:
     curd [KEYWORD] [-c FILE | --config=FILE] [--verbose]
     curd -n | --clean [-c FILE | --config=FILE] [--verbose]
     curd -l | --list [-c FILE | --config=FILE] [--verbose]
-    curd -r KEYWORD | --remove=KEYWORD [-c FILE | --config=FILE] [--verbose]
-    curd -s KEYWORD | --save=KEYWORD [-d DIR | --directory=DIR] [-c FILE | --config=FILE] [--verbose]
+    curd [KEYWORD] -r | --remove [-c FILE | --config=FILE] [--verbose]
+    curd [KEYWORD] -s | --save [-c FILE | --config=FILE] [--verbose]
     curd -h | --help
     curd -V | --version
 
 Options:
     -c FILE, --config=FILE  Specify configuration filename [default: <<replaceme>>].
-    -d DIR, --directory=DIR  Specify configuration filename [default: <current directory>].
     -h, --help     Show this screen.
     -V, --version  Show version.
     -v, --verbose  Display extra information.
@@ -67,11 +66,8 @@ Examples:
     file.
         curd -s
 
-    Save the specified directory as the specified path in the default
-	configuration file.
-        curd --save=curd --directory=~/go/src/github.com/dmcbane/curd
-
-    Remove the specified path from the default configuration file.
+    Remove the path associated with keyword 'essay' from the default
+    configuration file.
         curd -r essay`
 
 	usage = strings.Replace(usage, "<<replaceme>>", defaultConfig, 1)
@@ -82,21 +78,33 @@ Examples:
 	// the string to display for version
 	// don't require options to be provided before positional arguments
 	// have Parse call os.Exit() if help or version are requested by the user
-	arguments, _ := docopt.Parse(usage, nil, true, "Curd 1.0.0", false, true)
+	arguments, err := docopt.Parse(usage, nil, true, "Curd 1.0.0", false, false)
+	if err != nil {
+		fmt.Print(err)
+	}
+	var keys []string
+	for k, _ := range arguments {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		fmt.Printf("%9v: %v\n", k, arguments[k])
+	}
+	os.Exit(0)
 
 	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool bool
 	var keyword string
 
 	configFile, _ = arguments["--config"].(string)
 	directory, _ = arguments["--directory"].(string)
-	keyword, _ = arguments["KEYWORD"].(string)
+	keyword, _ = arguments["keyword"].(string)
 	removeString, _ := arguments["--remove"]
 	rString, _ := arguments["-r"]
 	saveString, _ := arguments["--save"]
 	sString, _ := arguments["-s"]
 	cleanBool = arguments["--clean"].(bool) || arguments["-n"].(bool)
 	listBool = arguments["--list"].(bool) || arguments["-l"].(bool)
-	verboseBool = arguments["--verbose"].(bool) || arguments["-v"].(bool)
+	verboseBool = arguments["--verbose"].(bool)
 	switch {
 	case removeString != nil:
 		removeBool = true
@@ -136,7 +144,7 @@ Examples:
 		fmt.Printf("Verbose:    %v\n", verboseBool)
 	}
 
-	return &Args{ConfigFile: configFile, Keyword: keyword, Clean: cleanBool, List: listBool, Read: readBool, Remove: removeBool, Save: saveBool, Directory: directory, Verbose: verboseBool}
+	return &Args{ConfigFile: configFile, Keyword: keyword, Clean: cleanBool, List: listBool, Read: readBool, Remove: removeBool, Save: saveBool, Verbose: verboseBool}
 }
 
 func getDefaultConfigurationFilename() string {
