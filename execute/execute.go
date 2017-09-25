@@ -10,11 +10,11 @@ import (
 	"github.com/dmcbane/curd/config"
 )
 
-type byKey []string
-
-func (k byKey) Len() int           { return len(k) }
-func (k byKey) Less(i, j int) bool { return k[i] < k[j] }
-func (k byKey) Swap(i, j int)      { k[i], k[j] = k[j], k[i] }
+//// type byKey []string
+////
+//// func (k byKey) Len() int           { return len(k) }
+//// func (k byKey) Less(i, j int) bool { return k[i] < k[j] }
+//// func (k byKey) Swap(i, j int)      { k[i], k[j] = k[j], k[i] }
 
 func ExecuteCommand(a args.Args, c config.Config) error {
 	switch {
@@ -31,13 +31,19 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 		}
 	case a.List:
 		{
-			keys := make([]string, len(c.Paths))
-			i := 0
+			// sort the keys of the arguments map
+			var keys []string
 			for k, _ := range c.Paths {
-				keys[i] = k
-				i++
+				keys = append(keys, k)
 			}
-			sort.Sort(byKey(keys))
+			sort.Strings(keys)
+			//// keys := make([]string, len(c.Paths))
+			//// i := 0
+			//// for k, _ := range c.Paths {
+			//// 	keys[i] = k
+			//// 	i++
+			//// }
+			//// sort.Sort(byKey(keys))
 			for _, v := range keys {
 				fmt.Printf("%s - %s\n", v, (c.Paths)[v])
 			}
