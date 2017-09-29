@@ -34,6 +34,8 @@ Usage:
     curd remove [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
     curd [KEYWORD] [--config <file>] [--verbose]
+    curd (-h | --help)
+    curd (-V | --version)
 
 Options:
     --config=<file>  Specify configuration filename [default: <<replaceme>>].
