@@ -5,7 +5,6 @@ import (
 	"github.com/docopt/docopt-go"
 	"os"
 	"path"
-	"sort"
 	"strings"
 )
 
@@ -82,43 +81,19 @@ Examples:
 	if err != nil {
 		fmt.Print(err)
 	}
-	var keys []string
-	for k, _ := range arguments {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	for _, k := range keys {
-		fmt.Printf("%9v: %v\n", k, arguments[k])
-	}
-	os.Exit(0)
 
 	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool bool
 	var keyword string
 
 	configFile, _ = arguments["--config"].(string)
-	directory, _ = arguments["--directory"].(string)
-	keyword, _ = arguments["keyword"].(string)
-	removeString, _ := arguments["--remove"]
-	rString, _ := arguments["-r"]
-	saveString, _ := arguments["--save"]
-	sString, _ := arguments["-s"]
-	cleanBool = arguments["--clean"].(bool) || arguments["-n"].(bool)
-	listBool = arguments["--list"].(bool) || arguments["-l"].(bool)
-	verboseBool = arguments["--verbose"].(bool)
-	switch {
-	case removeString != nil:
-		removeBool = true
-		keyword = removeString.(string)
-	case rString != nil:
-		removeBool = true
-	case saveString != nil:
-		saveBool = true
-		keyword = saveString.(string)
-	case sString != nil:
-		saveBool = true
-	}
-
+	directory, _ = arguments["--dir"].(string)
+	keyword, _ = arguments["KEYWORD"].(string)
+	cleanBool = arguments["clean"].(bool)
+	listBool = arguments["list"].(bool) || arguments["ls"].(bool)
+	removeBool = arguments["remove"].(bool)
+	saveBool = arguments["save"].(bool)
 	readBool = !cleanBool && !listBool && !removeBool && !saveBool
+	verboseBool = arguments["--verbose"].(bool)
 
 	if configFile == "" {
 		configFile = defaultConfig
