@@ -27,3 +27,5 @@ _testmain.go
 desktop.ini
 
 /vendor/
+
+/curd

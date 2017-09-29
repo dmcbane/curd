@@ -30,45 +30,45 @@ H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 
 Usage:
-    curd [KEYWORD] [-c FILE | --config=FILE] [--verbose]
-    curd -n | --clean [-c FILE | --config=FILE] [--verbose]
-    curd -l | --list [-c FILE | --config=FILE] [--verbose]
-    curd [KEYWORD] -r | --remove [-c FILE | --config=FILE] [--verbose]
-    curd [KEYWORD] -s | --save [-c FILE | --config=FILE] [--verbose]
-    curd -h | --help
-    curd -V | --version
+    curd clean [--config <file>] [--verbose]
+    curd (ls | list) [--config <file>] [--verbose]
+    curd remove [KEYWORD] [--config <file>] [--verbose]
+    curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
+    curd [KEYWORD] [--config <file>] [--verbose]
 
 Options:
-    -c FILE, --config=FILE  Specify configuration filename [default: <<replaceme>>].
+    --config=<file>  Specify configuration filename [default: <<replaceme>>].
+    --dir=<directory>  Specify configuration filename [default: <current directory>].
     -h, --help     Show this screen.
     -V, --version  Show version.
     -v, --verbose  Display extra information.
 
 Examples:
     List all of the paths defined in the default configuration file.
-        curd -l
+        curd ls
 
     List all of the paths in a specified configuration file.
-        curd --list --config some_configuration_file
+        curd list --config some_configuration_file
 
     Clean paths from the default configuration that do not exist in the
     filesystem.
-        curd --clean
-
-    Clean paths that do not exist in the filesystem from the specified
-    configuration.
-        curd -n -c 'configuration file'
+        curd clean
 
     Read the default path from the default configuration file.
         curd
 
     Save the current directory as the default path in the default configuration
     file.
-        curd -s
+        curd save
 
-    Remove the path associated with keyword 'essay' from the default
-    configuration file.
-        curd -r essay`
+    Save the specified directory as the specified path in the default
+	configuration file.
+        curd save curd --dir=~/go/src/github.com/dmcbane/curd
+
+    Remove the specified path from the default configuration file.
+        curd remove essay
+
+`
 
 	usage = strings.Replace(usage, "<<replaceme>>", defaultConfig, 1)
 

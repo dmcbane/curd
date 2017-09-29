@@ -1,0 +1,483 @@
+./curd -h
+CURD - Change to a User's Recurring Directory 1.0.0
+H. Dale McBane<h.dale.mcbane@gmail.com>
+Save and return to paths you visit often.
+
+Usage:
+    curd clean [--config <file>] [--verbose]
+    curd (ls | list) [--config <file>] [--verbose]
+    curd remove [KEYWORD] [--config <file>] [--verbose]
+    curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
+    curd [KEYWORD] [--config <file>] [--verbose]
+
+Options:
+    --config=<file>  Specify configuration filename [default: /home/dmcbane/.curdrc].
+    --dir=<directory>  Specify configuration filename [default: <current directory>].
+    -h, --help     Show this screen.
+    -V, --version  Show version.
+    -v, --verbose  Display extra information.
+
+Examples:
+    List all of the paths defined in the default configuration file.
+        curd ls
+
+    List all of the paths in a specified configuration file.
+        curd list --config some_configuration_file
+
+    Clean paths from the default configuration that do not exist in the
+    filesystem.
+        curd clean
+
+    Read the default path from the default configuration file.
+        curd
+
+    Save the current directory as the default path in the default configuration
+    file.
+        curd save
+
+    Save the specified directory as the specified path in the default
+	configuration file.
+        curd save curd --dir=~/go/src/github.com/dmcbane/curd
+
+    Remove the specified path from the default configuration file.
+        curd remove essay
+./curd clean
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: true
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd clean --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: true
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd clean --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: true
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd clean --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: true
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd ls
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: true
+   remove: false
+     save: false
+./curd list
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: true
+       ls: false
+   remove: false
+     save: false
+./curd ls --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: true
+   remove: false
+     save: false
+./curd list --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: true
+       ls: false
+   remove: false
+     save: false
+./curd ls --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: true
+   remove: false
+     save: false
+./curd list --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: true
+       ls: false
+   remove: false
+     save: false
+./curd ls --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: true
+   remove: false
+     save: false
+./curd list --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: true
+       ls: false
+   remove: false
+     save: false
+./curd remove
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: true
+     save: false
+./curd remove keyword
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: true
+     save: false
+./curd remove --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: true
+     save: false
+./curd remove keyword --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: true
+     save: false
+./curd remove --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: true
+     save: false
+./curd remove keyword --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: true
+     save: false
+./curd remove keyword --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: true
+     save: false
+./curd remove --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: true
+     save: false
+./curd save
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save keyword
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save --dir tom
+ --config: /home/dmcbane/.curdrc
+    --dir: tom
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save keyword --dir tom
+ --config: /home/dmcbane/.curdrc
+    --dir: tom
+--verbose: false
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save keyword --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save --config fred --dir tom
+ --config: fred
+    --dir: tom
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save keyword --config fred --dir tom
+ --config: fred
+    --dir: tom
+--verbose: false
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save --config fred --dir tom --verbose
+ --config: fred
+    --dir: tom
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save keyword --config fred --dir tom --verbose
+ --config: fred
+    --dir: tom
+--verbose: true
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save --dir tom --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: tom
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save keyword --dir tom --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: tom
+--verbose: true
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save keyword --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save keyword --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: keyword
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd save --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: true
+./curd
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: <nil>
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd john
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: john
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd john --config fred
+ --config: fred
+    --dir: <current directory>
+--verbose: false
+  KEYWORD: john
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd john --config fred --verbose
+ --config: fred
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: john
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: false
+./curd john --verbose
+ --config: /home/dmcbane/.curdrc
+    --dir: <current directory>
+--verbose: true
+  KEYWORD: john
+    clean: false
+     list: false
+       ls: false
+   remove: false
+     save: false
