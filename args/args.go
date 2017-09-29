@@ -77,10 +77,7 @@ Examples:
 	// the string to display for version
 	// don't require options to be provided before positional arguments
 	// have Parse call os.Exit() if help or version are requested by the user
-	arguments, err := docopt.Parse(usage, nil, true, "Curd 1.0.0", false, false)
-	if err != nil {
-		fmt.Print(err)
-	}
+	arguments, _ := docopt.Parse(usage, nil, true, "Curd 1.0.0", false, true)
 
 	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool bool
 	var keyword string
