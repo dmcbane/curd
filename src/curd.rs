@@ -13,8 +13,12 @@ pub fn execute_command(args: &::args::Args, config: &::config::Config) {
         let mut kv: HashMap<String, String> = HashMap::new();
         for (key, value) in config.paths.iter() {
             kv.insert(key.clone(), value.clone());
-        };
-        kv.insert(args.keyword.clone(), get_current_dir());
+        }
+        if args.directory == "<current directory>" {
+            kv.insert(args.keyword.clone(), get_current_dir());
+        } else {
+            kv.insert(args.keyword.clone(), args.directory.clone());
+        }
         let _ = ::config::Config {
             configfile: config.configfile.clone(),
             paths: kv,
@@ -26,7 +30,7 @@ pub fn execute_command(args: &::args::Args, config: &::config::Config) {
             if *key != args.keyword {
                 kv.insert(key.clone(), value.clone());
             }
-        };
+        }
         let _ = ::config::Config {
             configfile: config.configfile.clone(),
             paths: kv,
@@ -45,7 +49,7 @@ pub fn execute_command(args: &::args::Args, config: &::config::Config) {
             if path_exists(value) {
                 kv.insert(key.clone(), value.clone());
             }
-        };
+        }
         let _ = ::config::Config {
             configfile: config.configfile.clone(),
             paths: kv,
