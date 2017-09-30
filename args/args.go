@@ -63,7 +63,7 @@ Examples:
         curd save
 
     Save the specified directory as the specified path in the default
-	configuration file.
+    configuration file.
         curd save curd --dir=~/go/src/github.com/dmcbane/curd
 
     Remove the specified path from the default configuration file.
