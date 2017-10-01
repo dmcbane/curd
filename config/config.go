@@ -1,10 +1,9 @@
 package config
 
 import (
-	"bufio"
-	"fmt"
-	"os"
-	"strings"
+	"io/ioutil"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
@@ -15,31 +14,29 @@ type Config struct {
 func (c *Config) readConfig() error {
 	c.Paths = make(map[string]string)
 
-	file, err := os.Open(c.ConfigFile)
-	defer file.Close()
-	if err == nil {
-		scanner := bufio.NewScanner(file)
-		for scanner.Scan() {
-			s := scanner.Text()
-			ss := strings.Split(s, "|")
-			c.Paths[strings.Trim(ss[0], " \t")] = strings.Trim(ss[1], " \t")
-		}
-		return scanner.Err()
-	} else {
-		return err
-	}
-}
-
-func (c *Config) WriteConfig() error {
-	file, err := os.Create(c.ConfigFile)
-	defer file.Close()
+	content, err := ioutil.ReadFile(c.ConfigFile)
 	if err != nil {
 		return err
 	}
-	for k, v := range c.Paths {
-		if _, err := file.WriteString(fmt.Sprintf("%s| %s\n", k, v)); err != nil {
-			return err
-		}
+	m := make(map[interface{}]interface{})
+	err = yaml.Unmarshal(content, &m)
+	if err != nil {
+		return err
+	}
+	for k, v := range m {
+		c.Paths[k.(string)] = v.(string)
+	}
+	return nil
+}
+
+func (c *Config) WriteConfig() error {
+	content, err := yaml.Marshal(&(c.Paths))
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(c.ConfigFile, content, 0644)
+	if err != nil {
+		return err
 	}
 	return nil
 }
