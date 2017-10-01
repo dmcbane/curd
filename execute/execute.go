@@ -10,12 +10,6 @@ import (
 	"github.com/dmcbane/curd/config"
 )
 
-//// type byKey []string
-////
-//// func (k byKey) Len() int           { return len(k) }
-//// func (k byKey) Less(i, j int) bool { return k[i] < k[j] }
-//// func (k byKey) Swap(i, j int)      { k[i], k[j] = k[j], k[i] }
-
 func ExecuteCommand(a args.Args, c config.Config) error {
 	switch {
 	case a.Clean:
@@ -37,13 +31,6 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 				keys = append(keys, k)
 			}
 			sort.Strings(keys)
-			//// keys := make([]string, len(c.Paths))
-			//// i := 0
-			//// for k, _ := range c.Paths {
-			//// 	keys[i] = k
-			//// 	i++
-			//// }
-			//// sort.Sort(byKey(keys))
 			for _, v := range keys {
 				fmt.Printf("%s - %s\n", v, (c.Paths)[v])
 			}
@@ -57,11 +44,15 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 		}
 	case a.Save:
 		{
-			pwd, err := os.Getwd()
-			if err != nil {
-				return err
+			if a.Directory == "" {
+				pwd, err := os.Getwd()
+				if err != nil {
+					return err
+				}
+				(c.Paths)[a.Keyword] = pwd
+			} else {
+				(c.Paths)[a.Keyword] = a.Directory
 			}
-			(c.Paths)[a.Keyword] = pwd
 			if err := c.WriteConfig(); err != nil {
 				return err
 			}

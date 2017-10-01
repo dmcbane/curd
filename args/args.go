@@ -16,6 +16,7 @@ type Args struct {
 	Read       bool
 	Remove     bool
 	Save       bool
+	Directory  string
 	Verbose    bool
 }
 
@@ -118,7 +119,7 @@ Examples:
 		fmt.Printf("Verbose:    %v\n", verboseBool)
 	}
 
-	return &Args{ConfigFile: configFile, Keyword: keyword, Clean: cleanBool, List: listBool, Read: readBool, Remove: removeBool, Save: saveBool, Verbose: verboseBool}
+	return &Args{ConfigFile: configFile, Keyword: keyword, Clean: cleanBool, List: listBool, Read: readBool, Remove: removeBool, Save: saveBool, Directory: directory, Verbose: verboseBool}
 }
 
 func getDefaultConfigurationFilename() string {
