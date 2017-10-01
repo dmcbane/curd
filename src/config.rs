@@ -19,9 +19,9 @@ impl Config {
 
         //    return Err("not enough arguments");
         Ok(Config {
-               configfile: configuration_file.clone(),
-               paths: kv,
-           })
+            configfile: configuration_file.clone(),
+            paths: kv,
+        })
     }
 
     fn load_configuration(filename: &str) -> Result<HashMap<String, String>, &'static str> {
@@ -42,10 +42,9 @@ impl Config {
     }
 
     pub fn save_configuration<'a>(&'a self) -> SIResult<()> {
-        let file = OpenOptions::new()
-            .write(true)
-            .truncate(true)
-            .open(&self.configfile)?;
+        let file = OpenOptions::new().write(true).truncate(true).open(
+            &self.configfile,
+        )?;
         let mut writer = BufWriter::new(&file);
 
         // Write the paths to `file`

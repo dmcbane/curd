@@ -103,16 +103,16 @@ impl Args {
         };
 
         return Ok(Args {
-                      configfile: config.to_string(),
-                      keyword: keyword.to_string(),
-                      clean: clean,
-                      list: list,
-                      read: read,
-                      remove: remove,
-                      save: save,
-                      directory: directory.to_string(),
-                      verbose: verbose,
-                  });
+            configfile: config.to_string(),
+            keyword: keyword.to_string(),
+            clean: clean,
+            list: list,
+            read: read,
+            remove: remove,
+            save: save,
+            directory: directory.to_string(),
+            verbose: verbose,
+        });
     }
 
     fn get_default_config_filename() -> String {
