@@ -63,7 +63,7 @@ My typical workflow starts with setting up the saved paths in CURD:
 
     cd ~/src/DMS
     curd save dms
-    cd ~/GoogleDrive/dev/rust/projects/test
+    cd ~/GoogleDrive/dev/rust/projects/testing
     curd save rust --dir=~/GoogleDrive/dev/rust/projects
     curd save test
     cd ~/go/src/github.com/dmcbane/curd
