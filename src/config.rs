@@ -1,12 +1,13 @@
+extern crate yaml_rust;
+
 use std::collections::HashMap;
 use std::fs::File;
 use std::fs::OpenOptions;
-use std::io::BufRead;
-use std::io::BufReader;
 use std::io::BufWriter;
 use std::io::prelude::*;
 use std::io::Result as SIResult;
 use std::path::Path;
+use self::yaml_rust::{YamlLoader, YamlEmitter};
 
 pub struct Config {
     pub configfile: String,
@@ -27,15 +28,20 @@ impl Config {
     fn load_configuration(filename: &str) -> Result<HashMap<String, String>, &'static str> {
         let mut result: HashMap<String, String> = HashMap::new();
         if Path::new(filename).exists() {
-            let f = File::open(filename).unwrap();
-            let file = BufReader::new(&f);
+            let mut f = File::open(filename).unwrap();
+            let mut contents = String::new();
+            f.read_to_string(&mut contents).unwrap();
+            let docs = YamlLoader::load_from_str(&contents).unwrap();
 
-            for line in file.lines() {
-                let mut l = line.unwrap();
-                let pipe = l.find('|').unwrap_or(l.len());
-                let key: String = l.drain(..pipe).collect(); // retrieve the key
-                let value: String = l.drain(2..).collect(); // retrieve the value
-                result.insert(key, value);
+            // Multi document support, doc is a yaml::Yaml
+            let doc = &docs[0];
+            let hsh = doc.as_hash().unwrap();
+
+            for (key, value) in hsh.iter() {
+                result.insert(
+                    key.as_str().unwrap().to_string(),
+                    value.as_str().unwrap().to_string(),
+                );
             }
         }
         Ok(result)
@@ -46,12 +52,21 @@ impl Config {
             &self.configfile,
         )?;
         let mut writer = BufWriter::new(&file);
+        let mut yaml_str = "".to_string();
 
         // Write the paths to `file`
         for (key, value) in self.paths.iter() {
-            let line = format!("{}| {}\n", key, value);
-            writer.write(line.as_bytes())?;
+            let line = format!("{}: {}\n", key, value);
+            yaml_str.push_str(&line);
         }
+        let docs = YamlLoader::load_from_str(&yaml_str).unwrap();
+        let doc = &docs[0];
+        let mut out_str = String::new();
+        {
+            let mut emitter = YamlEmitter::new(&mut out_str);
+            emitter.dump(doc).unwrap(); // dump the YAML object to a String
+        }
+        writer.write_all(out_str.as_bytes())?;
         writer.flush()?;
         Ok(())
     }

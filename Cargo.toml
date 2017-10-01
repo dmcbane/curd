@@ -7,3 +7,4 @@ authors = ["H. Dale McBane <h.dale.mcbane@gmail.com>"]
 docopt = "0.8"
 serde = "1.0" # if you're using `derive(Deserialize)`
 serde_derive = "1.0" # if you're using `derive(Deserialize)`
+yaml-rust = "0.3"
