@@ -25,7 +25,8 @@ func NewArgs() *Args {
 
 	defaultConfig = getDefaultConfigurationFilename()
 
-	usage = `CURD - Change to a User's Recurring Directory 1.0.0
+	VERSION := "1.0.1"
+	usage = `CURD - Change to a User's Recurring Directory <<version>>
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 
@@ -40,7 +41,7 @@ Usage:
 
 Options:
     --config=<file>  Specify configuration filename [default: <<replaceme>>].
-    --dir=<directory>  Specify configuration filename [default: <current directory>].
+    --dir=<directory>  Specify path name to associate with keyword [default: <current directory>].
     -h, --help     Show this screen.
     -V, --version  Show version.
     -v, --verbose  Display extra information.
@@ -72,6 +73,7 @@ Examples:
 
 `
 
+	usage = strings.Replace(usage, "<<version>>", VERSION, 1)
 	usage = strings.Replace(usage, "<<replaceme>>", defaultConfig, 1)
 
 	// parse the usage string
@@ -80,7 +82,7 @@ Examples:
 	// the string to display for version
 	// don't require options to be provided before positional arguments
 	// have Parse call os.Exit() if help or version are requested by the user
-	arguments, _ := docopt.Parse(usage, nil, true, "Curd 1.0.0", false, true)
+	arguments, _ := docopt.Parse(usage, nil, true, fmt.Sprintf("Curd %v", VERSION), false, true)
 
 	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool bool
 	var keyword string
