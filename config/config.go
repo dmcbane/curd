@@ -20,11 +20,10 @@ func (c *Config) readConfig() error {
 	}
 	m := make(map[interface{}]interface{})
 	err = yaml.Unmarshal(content, &m)
-	if err != nil {
-		return err
-	}
-	for k, v := range m {
-		c.Paths[k.(string)] = v.(string)
+	if err == nil {
+		for k, v := range m {
+			c.Paths[k.(string)] = v.(string)
+		}
 	}
 	return nil
 }
