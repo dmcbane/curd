@@ -34,7 +34,7 @@ Save and return to paths you visit often.
 Usage:
     curd clean [--config <file>] [--verbose]
     curd (ls | list) [--config <file>] [--verbose]
-    curd remove [KEYWORD] [--config <file>] [--verbose]
+    curd (rm | remove) [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
     curd [KEYWORD] [--config <file>] [--verbose]
     curd (-h | --help)
@@ -93,7 +93,7 @@ Examples:
 	keyword, _ = arguments["KEYWORD"].(string)
 	cleanBool = arguments["clean"].(bool)
 	listBool = arguments["list"].(bool) || arguments["ls"].(bool)
-	removeBool = arguments["remove"].(bool)
+	removeBool = arguments["remove"].(bool) || arguments["rm"].(bool)
 	saveBool = arguments["save"].(bool)
 	readBool = !cleanBool && !listBool && !removeBool && !saveBool
 	verboseBool = arguments["--verbose"].(bool)
