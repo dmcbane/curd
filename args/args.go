@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"github.com/docopt/docopt-go"
 	"os"
-	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -127,8 +128,10 @@ Examples:
 func getDefaultConfigurationFilename() string {
 	const default_config = ".curdrc"
 	var home string
-	if home = os.Getenv("HOME"); home == "" {
+	if runtime.GOOS == "windows" {
 		home = os.Getenv("USERPROFILE")
+	} else {
+		home = os.Getenv("HOME")
 	}
-	return path.Join(home, default_config)
+	return filepath.Join(home, default_config)
 }
