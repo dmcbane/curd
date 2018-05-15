@@ -26,7 +26,8 @@ func NewArgs() *Args {
 
 	defaultConfig = getDefaultConfigurationFilename()
 
-	VERSION := "1.0.1"
+	VERSION := "1.1.0"
+	VERSION_USER := fmt.Sprintf("Curd %v", VERSION)
 	usage = `CURD - Change to a User's Recurring Directory <<version>>
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
@@ -36,9 +37,9 @@ Usage:
     curd (ls | list) [--config <file>] [--verbose]
     curd (rm | remove) [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
+    curd (help | -h | --help)
+    curd (version | -V | --version)
     curd [KEYWORD] [--config <file>] [--verbose]
-    curd (-h | --help)
-    curd (-V | --version)
 
 Options:
     --config=<file>  Specify configuration filename [default: <<replaceme>>].
@@ -77,16 +78,20 @@ Examples:
 	usage = strings.Replace(usage, "<<version>>", VERSION, 1)
 	usage = strings.Replace(usage, "<<replaceme>>", defaultConfig, 1)
 
-	// parse the usage string
-	// nil means use os.Args
-	// true means display usage as the help message
-	// the string to display for version
-	// don't require options to be provided before positional arguments
-	// have Parse call os.Exit() if help or version are requested by the user
-	arguments, _ := docopt.Parse(usage, nil, true, fmt.Sprintf("Curd %v", VERSION), false, true)
+	parser := &docopt.Parser{HelpHandler: docopt.PrintHelpAndExit, OptionsFirst: false, SkipHelpFlags: false}
+	arguments, _ := parser.ParseArgs(usage, nil, VERSION_USER)
 
 	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool bool
 	var keyword string
+
+	if arguments["help"].(bool) {
+		fmt.Println(usage)
+		os.Exit(0)
+	}
+	if arguments["version"].(bool) {
+		fmt.Println(VERSION_USER)
+		os.Exit(0)
+	}
 
 	configFile, _ = arguments["--config"].(string)
 	directory, _ = arguments["--dir"].(string)
