@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+        "strings"
 
 	"github.com/dmcbane/curd/args"
 	"github.com/dmcbane/curd/config"
@@ -31,10 +32,17 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 				keys = append(keys, k)
 			}
 			sort.Strings(keys)
-			for _, v := range keys {
-				fmt.Printf("%s - %s\n", v, (c.Paths)[v])
+			if a.KeywordsOnly {
+                                // TODO: skip <default>""
+                                result := strings.Join(keys[1:], "  ")
+                                fmt.Println(result)
+			} else {
+			        for _, v := range keys {
+					fmt.Printf("%s - %s\n", v, (c.Paths)[v])
+				}
 			}
 		}
+
 	case a.Remove:
 		{
 			delete(c.Paths, a.Keyword)

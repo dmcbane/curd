@@ -10,15 +10,16 @@ import (
 )
 
 type Args struct {
-	ConfigFile string
-	Keyword    string
-	Clean      bool
-	List       bool
-	Read       bool
-	Remove     bool
-	Save       bool
-	Directory  string
-	Verbose    bool
+	ConfigFile   string
+	Keyword      string
+	Clean        bool
+	List         bool
+	Read         bool
+	Remove       bool
+	Save         bool
+	Directory    string
+	Verbose      bool
+	KeywordsOnly bool
 }
 
 func NewArgs() *Args {
@@ -26,7 +27,7 @@ func NewArgs() *Args {
 
 	defaultConfig = getDefaultConfigurationFilename()
 
-	VERSION := "1.1.0"
+	VERSION := "1.2.0"
 	VERSION_USER := fmt.Sprintf("Curd %v", VERSION)
 	usage = `CURD - Change to a User's Recurring Directory <<version>>
 H. Dale McBane<h.dale.mcbane@gmail.com>
@@ -34,7 +35,7 @@ Save and return to paths you visit often.
 
 Usage:
     curd clean [--config <file>] [--verbose]
-    curd (ls | list) [--config <file>] [--verbose]
+    curd (ls | list) [-k | --keywords-only] [--config <file>] [--verbose]
     curd (rm | remove) [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
     curd (help | -h | --help)
@@ -44,13 +45,17 @@ Usage:
 Options:
     --config=<file>  Specify configuration filename [default: <<replaceme>>].
     --dir=<directory>  Specify path name to associate with keyword [default: <current directory>].
+    -k, --keywords-only  Don't include the path names in the list command.
     -h, --help     Show this screen.
     -V, --version  Show version.
     -v, --verbose  Display extra information.
 
 Examples:
-    List all of the paths defined in the default configuration file.
+    List all of the keywords and paths defined in the default configuration file.
         curd ls
+
+    List all of the keywords defined in the default configuration file.
+        curd ls -k
 
     List all of the paths in a specified configuration file.
         curd list --config some_configuration_file
@@ -81,7 +86,7 @@ Examples:
 	parser := &docopt.Parser{HelpHandler: docopt.PrintHelpAndExit, OptionsFirst: false, SkipHelpFlags: false}
 	arguments, _ := parser.ParseArgs(usage, nil, VERSION_USER)
 
-	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool bool
+	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool, keywordsOnlyBool bool
 	var keyword string
 
 	if arguments["help"].(bool) {
@@ -95,6 +100,7 @@ Examples:
 
 	configFile, _ = arguments["--config"].(string)
 	directory, _ = arguments["--dir"].(string)
+	keywordsOnlyBool = arguments["--keywords-only"].(bool)
 	keyword, _ = arguments["KEYWORD"].(string)
 	cleanBool = arguments["clean"].(bool)
 	listBool = arguments["list"].(bool) || arguments["ls"].(bool)
@@ -116,18 +122,19 @@ Examples:
 	}
 
 	if verboseBool {
-		fmt.Printf("ConfigFile: %v\n", configFile)
-		fmt.Printf("Keyword:    %v\n", keyword)
-		fmt.Printf("Clean:      %v\n", cleanBool)
-		fmt.Printf("List:       %v\n", listBool)
-		fmt.Printf("Read:       %v\n", readBool)
-		fmt.Printf("Remove:     %v\n", removeBool)
-		fmt.Printf("Save:       %v\n", saveBool)
-		fmt.Printf("Directory:  %v\n", directory)
-		fmt.Printf("Verbose:    %v\n", verboseBool)
+		fmt.Printf("ConfigFile:   %v\n", configFile)
+		fmt.Printf("Keyword:      %v\n", keyword)
+		fmt.Printf("Clean:        %v\n", cleanBool)
+		fmt.Printf("List:         %v\n", listBool)
+		fmt.Printf("Read:         %v\n", readBool)
+		fmt.Printf("Remove:       %v\n", removeBool)
+		fmt.Printf("Save:         %v\n", saveBool)
+		fmt.Printf("Directory:    %v\n", directory)
+		fmt.Printf("Verbose:      %v\n", verboseBool)
+		fmt.Printf("KeywordsOnly: %v\n", keywordsOnlyBool)
 	}
 
-	return &Args{ConfigFile: configFile, Keyword: keyword, Clean: cleanBool, List: listBool, Read: readBool, Remove: removeBool, Save: saveBool, Directory: directory, Verbose: verboseBool}
+	return &Args{ConfigFile: configFile, Keyword: keyword, Clean: cleanBool, List: listBool, Read: readBool, Remove: removeBool, Save: saveBool, Directory: directory, Verbose: verboseBool, KeywordsOnly: keywordsOnlyBool}
 }
 
 func getDefaultConfigurationFilename() string {
