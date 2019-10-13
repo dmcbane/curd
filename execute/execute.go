@@ -24,6 +24,10 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 				return err
 			}
 		}
+        case a.Completion:
+                {
+                        GenerateBashCompletionWordLists(a.Cmdline)
+                }
 	case a.List:
 		{
 			// sort the keys of the arguments map
@@ -75,4 +79,64 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 		}
 	}
 	return nil
+}
+
+func GenerateBashCompletionWordLists(cmdline []string) {
+  for _, s := range cmdline {
+    fmt.Printf("%s\n", s)
+  }
+
+
+  //   COMPREPLY=()   # Array variable storing the possible completions.
+  //
+  //   # keep the suggestions in a local variable
+  //   local suggestions
+  //   local cur=${COMP_WORDS[COMP_CWORD]}
+  //   local pre="${COMP_WORDS[COMP_CWORD - 1]}"
+  //   # Pointer to current completion word.
+  //   # By convention, it's named "cur" but this isn't strictly necessary.
+  //
+  //
+  //   # echo-err "COMP_CWORD = ${COMP_CWORD}"
+  //   # echo-err "cur= ${cur}"
+  //
+  //
+  //   # TODO: Make a function that will check everything up to COMP_CWORD for the value that we're looking for
+  //   # make it take an array of values or a space separated set of options to check for
+  //   # then replace the mess below with a single function call
+  //   #
+  //   # if [ $(_previous_contains_all "${#COMP_WORDS[@]}" "-h --help help -V --version version") ]; then
+  //   # if [ $(_previous_contains_some "${#COMP_WORDS[@]}" "-h --help help -V --version version") ]; then
+  //   #
+  //   # this will allow  random order of parameters
+  //
+  //   if [ "$pre" == "-h" -o "$pre" == "--help" -o "$pre" == "help" -o "$pre" == "-V" -o "$pre" == "--version" -o "$pre" == "version" ]; then
+  //     return 0
+  //   elif [ "$pre" == "clean" ]; then
+  //     suggestions=($(compgen -W "--config --verbose"))
+  //   elif [ "$pre" == "ls" -o "$pre" == "list" ]; then
+  //     suggestions=($(compgen -W "--config --verbose -k --keywords-only"))
+  //   else
+  //     case "$cur" in
+  //       -h | --help | help | -V | --version | version)
+  //         return 0
+  //         ;;
+  //       --config)
+  //         # suggestions should be local filenames
+  //         ;;
+  //       --*)
+  //         suggestions=($(compgen -W "--help --config --verbose --version" -- "$cur"))
+  //         ;;
+  //       -*)
+  //         suggestions=($(compgen -W "-h --help -V --version -v --verbose --config" -- "$cur"))
+  //         ;;
+  //       *)
+  //         suggestions=($(compgen -W "-h --help -V --version -v --verbose --config clean ls list rm remove save help version $(curd ls -k)" -- "$cur"))
+  //         ;;
+  //     esac
+  //   fi
+  //
+  //   COMPREPLY=("${suggestions[@]}")
+  //
+  //   return 0
 }

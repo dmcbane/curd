@@ -20,6 +20,8 @@ type Args struct {
 	Directory    string
 	Verbose      bool
 	KeywordsOnly bool
+	Completion   bool
+        Cmdline      []string
 }
 
 func NewArgs() *Args {
@@ -27,7 +29,7 @@ func NewArgs() *Args {
 
 	defaultConfig = getDefaultConfigurationFilename()
 
-	VERSION := "1.2.0"
+	VERSION := "1.2.1"
 	VERSION_USER := fmt.Sprintf("Curd %v", VERSION)
 	usage = `CURD - Change to a User's Recurring Directory <<version>>
 H. Dale McBane<h.dale.mcbane@gmail.com>
@@ -38,6 +40,7 @@ Usage:
     curd (ls | list) [-k | --keywords-only] [--config <file>] [--verbose]
     curd (rm | remove) [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
+    curd (completion | comp) CMDLINE ...
     curd (help | -h | --help)
     curd (version | -V | --version)
     curd [KEYWORD] [--config <file>] [--verbose]
@@ -78,6 +81,9 @@ Examples:
     Remove the specified path from the default configuration file.
         curd remove essay
 
+    Used by shell completion scripts.
+        curd comp curd
+
 `
 
 	usage = strings.Replace(usage, "<<version>>", VERSION, 1)
@@ -86,8 +92,9 @@ Examples:
 	parser := &docopt.Parser{HelpHandler: docopt.PrintHelpAndExit, OptionsFirst: false, SkipHelpFlags: false}
 	arguments, _ := parser.ParseArgs(usage, nil, VERSION_USER)
 
-	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool, keywordsOnlyBool bool
+	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool, keywordsOnlyBool, completionBool bool
 	var keyword string
+        var cmdline []string
 
 	if arguments["help"].(bool) {
 		fmt.Println(usage)
@@ -106,8 +113,11 @@ Examples:
 	listBool = arguments["list"].(bool) || arguments["ls"].(bool)
 	removeBool = arguments["remove"].(bool) || arguments["rm"].(bool)
 	saveBool = arguments["save"].(bool)
-	readBool = !cleanBool && !listBool && !removeBool && !saveBool
+	completionBool = arguments["completion"].(bool)
+	readBool = !cleanBool && !listBool && !removeBool && !saveBool && !completionBool
 	verboseBool = arguments["--verbose"].(bool)
+        cmdline = arguments["CMDLINE"].([]string)
+
 
 	if configFile == "" {
 		configFile = defaultConfig
@@ -132,9 +142,22 @@ Examples:
 		fmt.Printf("Directory:    %v\n", directory)
 		fmt.Printf("Verbose:      %v\n", verboseBool)
 		fmt.Printf("KeywordsOnly: %v\n", keywordsOnlyBool)
+		fmt.Printf("Completion:   %v\n", completionBool)
+                fmt.Printf("Cmdline:      %v\n", cmdline)
 	}
 
-	return &Args{ConfigFile: configFile, Keyword: keyword, Clean: cleanBool, List: listBool, Read: readBool, Remove: removeBool, Save: saveBool, Directory: directory, Verbose: verboseBool, KeywordsOnly: keywordsOnlyBool}
+	return &Args{ConfigFile: configFile,
+		Keyword:      keyword,
+		Clean:        cleanBool,
+		List:         listBool,
+		Read:         readBool,
+		Remove:       removeBool,
+		Save:         saveBool,
+		Directory:    directory,
+		Verbose:      verboseBool,
+		KeywordsOnly: keywordsOnlyBool,
+		Completion:   completionBool,
+                Cmdline:      cmdline}
 }
 
 func getDefaultConfigurationFilename() string {
