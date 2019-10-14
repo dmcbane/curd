@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
-        "strings"
+	"strings"
 
 	"github.com/dmcbane/curd/args"
 	"github.com/dmcbane/curd/config"
@@ -24,10 +24,10 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 				return err
 			}
 		}
-        case a.Completion:
-                {
-                        GenerateBashCompletionWordLists(a.Cmdline)
-                }
+	case a.Completion:
+		{
+			BashCompletionHelper(a.Cmdline, c.Paths)
+		}
 	case a.List:
 		{
 			// sort the keys of the arguments map
@@ -37,10 +37,10 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 			}
 			sort.Strings(keys)
 			if a.KeywordsOnly {
-                                result := strings.Join(keys[1:], "  ")
-                                fmt.Println(result)
+				result := strings.Join(keys[1:], "  ")
+				fmt.Println(result)
 			} else {
-			        for _, v := range keys {
+				for _, v := range keys {
 					fmt.Printf("%s - %s\n", v, (c.Paths)[v])
 				}
 			}
@@ -80,60 +80,131 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 	return nil
 }
 
-func GenerateBashCompletionWordLists(cmdline []string) {
-  result := strings.Join(cmdline[1:], " ")
-  fmt.Println(result)
+type StringArray struct {
+	value []string
+}
 
-  //   COMPREPLY=()   # Array variable storing the possible completions.
-  //
-  //   # keep the suggestions in a local variable
-  //   local suggestions
-  //   local cur=${COMP_WORDS[COMP_CWORD]}
-  //   local pre="${COMP_WORDS[COMP_CWORD - 1]}"
-  //   # Pointer to current completion word.
-  //   # By convention, it's named "cur" but this isn't strictly necessary.
-  //
-  //
-  //   # echo-err "COMP_CWORD = ${COMP_CWORD}"
-  //   # echo-err "cur= ${cur}"
-  //
-  //
-  //   # TODO: Make a function that will check everything up to COMP_CWORD for the value that we're looking for
-  //   # make it take an array of values or a space separated set of options to check for
-  //   # then replace the mess below with a single function call
-  //   #
-  //   # if [ $(_previous_contains_all "${#COMP_WORDS[@]}" "-h --help help -V --version version") ]; then
-  //   # if [ $(_previous_contains_some "${#COMP_WORDS[@]}" "-h --help help -V --version version") ]; then
-  //   #
-  //   # this will allow  random order of parameters
-  //
-  //   if [ "$pre" == "-h" -o "$pre" == "--help" -o "$pre" == "help" -o "$pre" == "-V" -o "$pre" == "--version" -o "$pre" == "version" ]; then
-  //     return 0
-  //   elif [ "$pre" == "clean" ]; then
-  //     suggestions=($(compgen -W "--config --verbose"))
-  //   elif [ "$pre" == "ls" -o "$pre" == "list" ]; then
-  //     suggestions=($(compgen -W "--config --verbose -k --keywords-only"))
-  //   else
-  //     case "$cur" in
-  //       -h | --help | help | -V | --version | version)
-  //         return 0
-  //         ;;
-  //       --config)
-  //         # suggestions should be local filenames
-  //         ;;
-  //       --*)
-  //         suggestions=($(compgen -W "--help --config --verbose --version" -- "$cur"))
-  //         ;;
-  //       -*)
-  //         suggestions=($(compgen -W "-h --help -V --version -v --verbose --config" -- "$cur"))
-  //         ;;
-  //       *)
-  //         suggestions=($(compgen -W "-h --help -V --version -v --verbose --config clean ls list rm remove save help version $(curd ls -k)" -- "$cur"))
-  //         ;;
-  //     esac
-  //   fi
-  //
-  //   COMPREPLY=("${suggestions[@]}")
-  //
-  //   return 0
+func _extend(slice []string, item string) []string {
+	n := len(slice)
+	if n == cap(slice) {
+		// Slice is full; must grow.
+		// We double its size and add 1, so if the size is zero we still grow.
+		newSlice := make([]string, n, 2*n+1)
+		copy(newSlice, slice)
+		slice = newSlice
+	}
+	slice = slice[0 : n+1]
+	slice[n] = item
+	return slice
+}
+
+func _append(slice []string, items ...string) []string {
+	for _, item := range items {
+		slice = _extend(slice, item)
+	}
+	return slice
+}
+
+func (a StringArray) contains(check string) bool {
+	for _, value := range a.value {
+		if value == check {
+			return true
+		}
+	}
+	return false
+}
+
+func (a StringArray) containsAll(checks ...string) bool {
+	for _, value := range checks {
+		if !a.contains(value) {
+			return false
+		}
+	}
+	return true
+}
+
+func (a StringArray) containsAny(checks ...string) bool {
+	for _, value := range checks {
+		if a.contains(value) {
+			return true
+		}
+	}
+	return false
+}
+
+func (a StringArray) toString() string {
+	return strings.Join(a.value, " ")
+}
+
+func BashCompletionHelper(cmdline []string, paths map[string]string) {
+	var currentValues = new(StringArray)
+	var availableCompletions = new(StringArray)
+	currentValues.toString()
+	availableCompletions.toString()
+
+	currentValues.value = cmdline[1:]
+	// drop the first value since it is always curd
+	currentValues.toString()
+
+	// completions are only available if not one of these
+	if !currentValues.containsAny("-h", "--help", "help", "-V", "--version", "version", "completion", "comp") {
+		if !currentValues.contains("--config") {
+			availableCompletions.value = _append(availableCompletions.value, "--config")
+			availableCompletions.toString()
+		} else {
+			var configFile string
+			for i, s := range currentValues.value {
+				if s == "--config" {
+					configFile = currentValues.value[i+1]
+					break
+				}
+			}
+			c, err := config.NewConfig(configFile)
+			if err == nil {
+				paths = c.Paths
+			}
+		}
+
+		if !currentValues.contains("--verbose") {
+			availableCompletions.value = _append(availableCompletions.value, "--verbose")
+			availableCompletions.toString()
+		}
+		// if none of the command group exists
+		if !currentValues.containsAny("clean", "ls", "list", "save", "rm", "remove") {
+			// add all commands to the completions list
+			availableCompletions.value = _append(availableCompletions.value, "clean", "ls", "list", "save", "rm", "remove")
+			// add all defined paths to the completions list
+			for k, _ := range paths {
+				if k != "<default>" {
+					availableCompletions.value = _append(availableCompletions.value, k)
+				}
+			}
+		} else { // at least one command exists, so let's find out which
+			// if currentValues.contains("clean") {
+			//   // nothing to do for clean
+			// }
+
+			if currentValues.containsAny("ls", "list") {
+				if !currentValues.containsAny("-k", "--keywords-only") {
+					availableCompletions.value = _append(availableCompletions.value, "-k", "--keywords-only")
+				}
+			}
+
+			if currentValues.containsAny("save") {
+				if !currentValues.containsAny("--dir") {
+					availableCompletions.value = _append(availableCompletions.value, "--dir")
+				}
+			}
+
+			if currentValues.containsAny("rm", "remove") {
+				// add all defined paths to the completions list
+				for k, _ := range paths {
+					if k != "<default>" {
+						availableCompletions.value = _append(availableCompletions.value, k)
+					}
+				}
+			}
+		}
+	}
+	fmt.Println(availableCompletions.toString())
 }
