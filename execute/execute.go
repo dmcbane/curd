@@ -157,6 +157,15 @@ func BashCompletionHelper(cmdline []string, paths map[string]string) {
 			if !currentValues.contains("--verbose") {
 				availableCompletions.value = _append(availableCompletions.value, "--verbose")
 			}
+			if currentValues.contains("save") && !currentValues.contains("--dir") {
+				availableCompletions.value = _append(availableCompletions.value, "--dir")
+			}
+
+			if currentValues.containsAny("ls", "list") {
+				if !currentValues.containsAny("-k", "--keywords-only") {
+					availableCompletions.value = _append(availableCompletions.value, "--keywords-only")
+				}
+			}
 		} else if currentValues.contains("-") { // starting a long or short options
 			availableCompletions.value = _append(availableCompletions.value, "-h")
 			availableCompletions.value = _append(availableCompletions.value, "--help")
@@ -169,6 +178,16 @@ func BashCompletionHelper(cmdline []string, paths map[string]string) {
 				availableCompletions.value = _append(availableCompletions.value, "-v")
 				availableCompletions.value = _append(availableCompletions.value, "--verbose")
 			}
+			if currentValues.contains("save") && !currentValues.contains("--dir") {
+				availableCompletions.value = _append(availableCompletions.value, "--dir")
+			}
+
+			if currentValues.containsAny("ls", "list") {
+				if !currentValues.containsAny("-k", "--keywords-only") {
+					availableCompletions.value = _append(availableCompletions.value, "-k", "--keywords-only")
+				}
+			}
+
 		} else {
 			availableCompletions.value = _append(availableCompletions.value, "-h")
 			availableCompletions.value = _append(availableCompletions.value, "--help")
@@ -217,8 +236,8 @@ func BashCompletionHelper(cmdline []string, paths map[string]string) {
 					}
 				}
 
-				if currentValues.containsAny("save") {
-					if !currentValues.containsAny("--dir") {
+				if currentValues.contains("save") {
+					if !currentValues.contains("--dir") {
 						availableCompletions.value = _append(availableCompletions.value, "--dir")
 					}
 				}
