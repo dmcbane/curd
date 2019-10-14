@@ -90,24 +90,23 @@ or the clean command to remove non existant paths that are defined:
 Typing `curd --help` will display the help screen for CURD which lists all available commands.
 
 ```
-CURD - Change to a User's Recurring Directory 1.2.1
+CURD - Change to a User's Recurring Directory 1.2.2
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 
 Usage:
     curd clean [--config <file>] [--verbose]
+    curd (completion | comp) CMDLINE ...
     curd (ls | list) [-k | --keywords-only] [--config <file>] [--verbose]
     curd (rm | remove) [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
-    curd (completion | -C | --completion)
     curd (help | -h | --help)
     curd (version | -V | --version)
     curd [KEYWORD] [--config <file>] [--verbose]
 
 Options:
-    --config=<file>  Specify configuration filename [default: /Users/dalemcbane/.curdrc].
+    --config=<file>  Specify configuration filename [default: /home/hdalemcbane/.curdrc].
     --dir=<directory>  Specify path name to associate with keyword [default: <current directory>].
-    -C, --compltion  Internal use only; bash completion.
     -k, --keywords-only  Don't include the path names in the list command.
     -h, --help     Show this screen.
     -V, --version  Show version.
@@ -140,5 +139,8 @@ Examples:
 
     Remove the specified path from the default configuration file.
         curd remove essay
+
+    Used by shell completion scripts.
+        curd comp curd ls -
 
 ```

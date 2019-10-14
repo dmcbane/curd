@@ -37,7 +37,6 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 			}
 			sort.Strings(keys)
 			if a.KeywordsOnly {
-                                // TODO: skip <default>""
                                 result := strings.Join(keys[1:], "  ")
                                 fmt.Println(result)
 			} else {
@@ -82,10 +81,8 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 }
 
 func GenerateBashCompletionWordLists(cmdline []string) {
-  for _, s := range cmdline {
-    fmt.Printf("%s\n", s)
-  }
-
+  result := strings.Join(cmdline[1:], " ")
+  fmt.Println(result)
 
   //   COMPREPLY=()   # Array variable storing the possible completions.
   //

@@ -11,7 +11,7 @@ _completions_curd()
 
   # keep the suggestions in a local variable
   local cur=${COMP_WORDS[COMP_CWORD]}
-  local suggestions=($(compgen -W "$(curd -C ${COMP_WORDS[@]})" -- "$cur"))
+  local suggestions=($(compgen -W "$(curd completion -- ${COMP_WORDS[@]})" -- "$cur"))
   COMPREPLY=("${suggestions[@]}")
 
   return 0

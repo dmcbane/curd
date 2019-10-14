@@ -29,7 +29,7 @@ func NewArgs() *Args {
 
 	defaultConfig = getDefaultConfigurationFilename()
 
-	VERSION := "1.2.1"
+	VERSION := "1.2.2"
 	VERSION_USER := fmt.Sprintf("Curd %v", VERSION)
 	usage = `CURD - Change to a User's Recurring Directory <<version>>
 H. Dale McBane<h.dale.mcbane@gmail.com>
@@ -37,10 +37,10 @@ Save and return to paths you visit often.
 
 Usage:
     curd clean [--config <file>] [--verbose]
+    curd (completion | comp) CMDLINE ...
     curd (ls | list) [-k | --keywords-only] [--config <file>] [--verbose]
     curd (rm | remove) [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
-    curd (completion | comp) CMDLINE ...
     curd (help | -h | --help)
     curd (version | -V | --version)
     curd [KEYWORD] [--config <file>] [--verbose]
@@ -82,7 +82,7 @@ Examples:
         curd remove essay
 
     Used by shell completion scripts.
-        curd comp curd
+        curd comp curd ls -
 
 `
 
@@ -113,7 +113,7 @@ Examples:
 	listBool = arguments["list"].(bool) || arguments["ls"].(bool)
 	removeBool = arguments["remove"].(bool) || arguments["rm"].(bool)
 	saveBool = arguments["save"].(bool)
-	completionBool = arguments["completion"].(bool)
+        completionBool = arguments["completion"].(bool) || arguments["comp"].(bool)
 	readBool = !cleanBool && !listBool && !removeBool && !saveBool && !completionBool
 	verboseBool = arguments["--verbose"].(bool)
         cmdline = arguments["CMDLINE"].([]string)
