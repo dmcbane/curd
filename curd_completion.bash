@@ -11,7 +11,14 @@ _completions_curd()
 
   # keep the suggestions in a local variable
   local cur=${COMP_WORDS[COMP_CWORD]}
-  local suggestions=($(compgen -W "$(curd completion -- ${COMP_WORDS[@]})" -- "$cur"))
+  local pre=${COMP_WORDS[COMP_CWORD - 1]}
+  local arg="-W"
+  if [ "$pre" == "--config" -o "$cur" == "--config" ]; then
+    arg="-f -W"
+  elif [ "$pre" == "--dir" -o "$cur" == "--dir" ]; then
+    arg="-d -W"
+  fi
+  local suggestions=($(compgen $arg "$(curd completion -- ${COMP_WORDS[@]})" -- "$cur"))
   COMPREPLY=("${suggestions[@]}")
 
   return 0
