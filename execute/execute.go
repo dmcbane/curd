@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -62,7 +63,10 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 				}
 				(c.Paths)[a.Keyword] = pwd
 			} else {
-				(c.Paths)[a.Keyword] = a.Directory
+				if _, err := os.Stat(a.Directory); err == nil {
+					abspath, _ := filepath.Abs(filepath.Clean(a.Directory))
+					(c.Paths)[a.Keyword] = abspath
+				}
 			}
 			if err := c.WriteConfig(); err != nil {
 				return err
