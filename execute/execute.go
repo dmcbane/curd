@@ -148,59 +148,87 @@ func BashCompletionHelper(cmdline []string, paths map[string]string) {
 
 	// completions are only available if not one of these
 	if !currentValues.containsAny("-h", "--help", "help", "-V", "--version", "version", "completion", "comp") {
-		if !currentValues.contains("--config") {
-			availableCompletions.value = _append(availableCompletions.value, "--config")
-			availableCompletions.toString()
+		if currentValues.contains("--") { // starting a long option
+			availableCompletions.value = _append(availableCompletions.value, "--help")
+			availableCompletions.value = _append(availableCompletions.value, "--version")
+			if !currentValues.contains("--config") {
+				availableCompletions.value = _append(availableCompletions.value, "--config")
+			}
+			if !currentValues.contains("--verbose") {
+				availableCompletions.value = _append(availableCompletions.value, "--verbose")
+			}
+		} else if currentValues.contains("-") { // starting a long or short options
+			availableCompletions.value = _append(availableCompletions.value, "-h")
+			availableCompletions.value = _append(availableCompletions.value, "--help")
+			availableCompletions.value = _append(availableCompletions.value, "-V")
+			availableCompletions.value = _append(availableCompletions.value, "--version")
+			if !currentValues.contains("--config") {
+				availableCompletions.value = _append(availableCompletions.value, "--config")
+			}
+			if !currentValues.containsAny("-v", "--verbose") {
+				availableCompletions.value = _append(availableCompletions.value, "-v")
+				availableCompletions.value = _append(availableCompletions.value, "--verbose")
+			}
 		} else {
-			var configFile string
-			for i, s := range currentValues.value {
-				if s == "--config" {
-					configFile = currentValues.value[i+1]
-					break
+			availableCompletions.value = _append(availableCompletions.value, "-h")
+			availableCompletions.value = _append(availableCompletions.value, "--help")
+			availableCompletions.value = _append(availableCompletions.value, "-V")
+			availableCompletions.value = _append(availableCompletions.value, "--version")
+			if !currentValues.contains("--config") {
+				availableCompletions.value = _append(availableCompletions.value, "--config")
+			} else {
+				var configFile string
+				for i, s := range currentValues.value {
+					if s == "--config" {
+						if len(currentValues.value) > i+1 {
+							configFile = currentValues.value[i+1]
+						}
+						break
+					}
 				}
-			}
-			c, err := config.NewConfig(configFile)
-			if err == nil {
-				paths = c.Paths
-			}
-		}
-
-		if !currentValues.contains("--verbose") {
-			availableCompletions.value = _append(availableCompletions.value, "--verbose")
-			availableCompletions.toString()
-		}
-		// if none of the command group exists
-		if !currentValues.containsAny("clean", "ls", "list", "save", "rm", "remove") {
-			// add all commands to the completions list
-			availableCompletions.value = _append(availableCompletions.value, "clean", "ls", "list", "save", "rm", "remove")
-			// add all defined paths to the completions list
-			for k, _ := range paths {
-				if k != "<default>" {
-					availableCompletions.value = _append(availableCompletions.value, k)
-				}
-			}
-		} else { // at least one command exists, so let's find out which
-			// if currentValues.contains("clean") {
-			//   // nothing to do for clean
-			// }
-
-			if currentValues.containsAny("ls", "list") {
-				if !currentValues.containsAny("-k", "--keywords-only") {
-					availableCompletions.value = _append(availableCompletions.value, "-k", "--keywords-only")
+				c, err := config.NewConfig(configFile)
+				if err == nil {
+					paths = c.Paths
 				}
 			}
 
-			if currentValues.containsAny("save") {
-				if !currentValues.containsAny("--dir") {
-					availableCompletions.value = _append(availableCompletions.value, "--dir")
-				}
+			if !currentValues.containsAny("-v", "--verbose") {
+				availableCompletions.value = _append(availableCompletions.value, "-v")
+				availableCompletions.value = _append(availableCompletions.value, "--verbose")
 			}
-
-			if currentValues.containsAny("rm", "remove") {
+			// if none of the command group exists
+			if !currentValues.containsAny("clean", "ls", "list", "save", "rm", "remove") {
+				// add all commands to the completions list
+				availableCompletions.value = _append(availableCompletions.value, "clean", "ls", "list", "save", "rm", "remove")
 				// add all defined paths to the completions list
 				for k, _ := range paths {
 					if k != "<default>" {
 						availableCompletions.value = _append(availableCompletions.value, k)
+					}
+				}
+			} else { // at least one command exists, so let's find out which
+				// if currentValues.contains("clean") {
+				//   // nothing to do for clean
+				// }
+
+				if currentValues.containsAny("ls", "list") {
+					if !currentValues.containsAny("-k", "--keywords-only") {
+						availableCompletions.value = _append(availableCompletions.value, "-k", "--keywords-only")
+					}
+				}
+
+				if currentValues.containsAny("save") {
+					if !currentValues.containsAny("--dir") {
+						availableCompletions.value = _append(availableCompletions.value, "--dir")
+					}
+				}
+
+				if currentValues.containsAny("rm", "remove") {
+					// add all defined paths to the completions list
+					for k, _ := range paths {
+						if k != "<default>" {
+							availableCompletions.value = _append(availableCompletions.value, k)
+						}
 					}
 				}
 			}
