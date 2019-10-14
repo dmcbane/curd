@@ -40,6 +40,18 @@ To actually make CURD useful, it needs to be integrated into the terminal/comman
     }
 
 
+### Bash Completion
+
+If you have bash completion installed on your system, you can source the src/github.com/dmcbane/curd/curd_completion.bash file from your ~/.bashrc file to enable bash completion for curr/curd.
+
+ZSH users can use the bash completion file by adding the following to their ~/.zshrc file.
+
+```
+autoload bashcompinit
+bashcompinit
+source ~/go/src/github.com/dmcbane/curd/curd_completion.bash
+```
+
 ## How It Works
 
 Curd allows you to save the current working directory or a specified path by keyword or to the default keyword. You can later retrieve the path by the same keyword or using the default.  (The default is indicated by not specifying a keyword.) Since changing the directory from within an application doesn't persist once the application exits, Curd can't directly change the current working directory.  To get around this, Curd just prints the directory to STDOUT so that we can use it to change the directory i.e.
@@ -144,3 +156,5 @@ Examples:
         curd comp curd ls -
 
 ```
+
+
