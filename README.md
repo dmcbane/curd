@@ -100,7 +100,7 @@ or the clean command to remove non existant paths that are defined:
 Typing `curd --help` will display the help screen for CURD which lists all available commands.
 
 ```
-CURD - Change to a User's Recurring Directory 1.2.2
+CURD - Change to a User's Recurring Directory 1.2.4
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 

@@ -29,7 +29,7 @@ func NewArgs() *Args {
 
 	defaultConfig = getDefaultConfigurationFilename()
 
-	VERSION := "1.2.2"
+	VERSION := "1.2.4"
 	VERSION_USER := fmt.Sprintf("Curd %v", VERSION)
 	usage = `CURD - Change to a User's Recurring Directory <<version>>
 H. Dale McBane<h.dale.mcbane@gmail.com>
