@@ -1,10 +1,8 @@
 # CURD
 
-***C**hange to one of a **U**ser's **R**ecurrent **D**irectories*
-
 CURD allows you to have quick access to directories that you visit often without having to type the entire path.  If you've used tools like [autojump](https://github.com/wting/autojump), [fasd](https://github.com/clvv/fasd), or [z](https://github.com/rupa/z), then you get the idea.  It is the latest evolution of a script that I have used for years to jump from project directory to project directory.  I decided to rewrite it in [Go](https://golang.org/) as a learning exercise and to simplify the script so that it is easy to maintain across multiple operating systems.  The result is a tool that is easy to integrate into the Windows command prompt, Windows Powershell, Mac Terminal, or Linux/Unix sh/bash/zsh shells.
 
-The name CURD?  It is one character off from curr which is the name of the original script that I used to change the current directory to one that I had previously saved.  The acronym is completely contrived to match.
+The name CURD?  It is one character off from curr which is the name of the original script that I used to change the current directory to one that I had previously saved.  The acronym (for ***C**hange to one of a **U**ser's **R**ecurrent **D**irectories*) is completely contrived to match.
 
 ## Installation
 
