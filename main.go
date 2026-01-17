@@ -19,6 +19,10 @@ func init() {
 
 func main() {
 	a := args.NewArgs()
+	if a == nil {
+		// NewArgs already handled printing help or version and indicated exit
+		return
+	}
 	c, err := config.NewConfig(a.ConfigFile)
 	if err != nil {
 		curdlog.Fatalln(err)

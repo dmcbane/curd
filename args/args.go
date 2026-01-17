@@ -21,17 +21,22 @@ type Args struct {
 	Verbose      bool
 	KeywordsOnly bool
 	Completion   bool
-        Cmdline      []string
+	Cmdline      []string
 }
 
-func NewArgs() *Args {
-	var configFile, defaultConfig, directory, usage string
+func getDefaultConfigurationFilename() string {
+	const default_config = ".curdrc"
+	var home string
+	if runtime.GOOS == "windows" {
+		home = os.Getenv("USERPROFILE")
+	} else {
+		home = os.Getenv("HOME")
+	}
+	return filepath.Join(home, default_config)
+}
 
-	defaultConfig = getDefaultConfigurationFilename()
-
-	VERSION := "1.2.4"
-	VERSION_USER := fmt.Sprintf("Curd %v", VERSION)
-	usage = `CURD - Change to a User's Recurring Directory <<version>>
+func generateUsage(version, defaultConfig string) string {
+	usage := `CURD - Change to a User's Recurring Directory <<version>>
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 
@@ -86,38 +91,42 @@ Examples:
 
 `
 
-	usage = strings.Replace(usage, "<<version>>", VERSION, 1)
+	usage = strings.Replace(usage, "<<version>>", version, 1)
 	usage = strings.Replace(usage, "<<replaceme>>", defaultConfig, 1)
+	return usage
+}
 
+func parseDocoptArgs(usage, versionUser string) (map[string]interface{}, error) {
 	parser := &docopt.Parser{HelpHandler: docopt.PrintHelpAndExit, OptionsFirst: false, SkipHelpFlags: false}
-	arguments, _ := parser.ParseArgs(usage, nil, VERSION_USER)
-
-	var cleanBool, listBool, readBool, removeBool, saveBool, verboseBool, keywordsOnlyBool, completionBool bool
-	var keyword string
-        var cmdline []string
+	arguments, err := parser.ParseArgs(usage, nil, versionUser)
+	if err != nil {
+		return nil, err
+	}
 
 	if arguments["help"].(bool) {
 		fmt.Println(usage)
-		os.Exit(0)
+		return nil, fmt.Errorf("help requested")
 	}
 	if arguments["version"].(bool) {
-		fmt.Println(VERSION_USER)
-		os.Exit(0)
+		fmt.Println(versionUser)
+		return nil, fmt.Errorf("version requested")
 	}
+	return arguments, nil
+}
 
-	configFile, _ = arguments["--config"].(string)
-	directory, _ = arguments["--dir"].(string)
-	keywordsOnlyBool = arguments["--keywords-only"].(bool)
-	keyword, _ = arguments["KEYWORD"].(string)
-	cleanBool = arguments["clean"].(bool)
-	listBool = arguments["list"].(bool) || arguments["ls"].(bool)
-	removeBool = arguments["remove"].(bool) || arguments["rm"].(bool)
-	saveBool = arguments["save"].(bool)
-        completionBool = arguments["completion"].(bool) || arguments["comp"].(bool)
-	readBool = !cleanBool && !listBool && !removeBool && !saveBool && !completionBool
-	verboseBool = arguments["--verbose"].(bool)
-        cmdline = arguments["CMDLINE"].([]string)
-
+func mapArguments(arguments map[string]interface{}, defaultConfig string) *Args {
+	configFile, _ := arguments["--config"].(string)
+	directory, _ := arguments["--dir"].(string)
+	keywordsOnlyBool := arguments["--keywords-only"].(bool)
+	keyword, _ := arguments["KEYWORD"].(string)
+	cleanBool := arguments["clean"].(bool)
+	listBool := arguments["list"].(bool) || arguments["ls"].(bool)
+	removeBool := arguments["remove"].(bool) || arguments["rm"].(bool)
+	saveBool := arguments["save"].(bool)
+	completionBool := arguments["completion"].(bool) || arguments["comp"].(bool)
+	readBool := !cleanBool && !listBool && !removeBool && !saveBool && !completionBool
+	verboseBool := arguments["--verbose"].(bool)
+	cmdline := arguments["CMDLINE"].([]string)
 
 	if configFile == "" {
 		configFile = defaultConfig
@@ -128,25 +137,11 @@ Examples:
 	}
 
 	if keyword == "" {
-		keyword = "<default>"
+		keyword = "default"
 	}
 
-	if verboseBool {
-		fmt.Printf("ConfigFile:   %v\n", configFile)
-		fmt.Printf("Keyword:      %v\n", keyword)
-		fmt.Printf("Clean:        %v\n", cleanBool)
-		fmt.Printf("List:         %v\n", listBool)
-		fmt.Printf("Read:         %v\n", readBool)
-		fmt.Printf("Remove:       %v\n", removeBool)
-		fmt.Printf("Save:         %v\n", saveBool)
-		fmt.Printf("Directory:    %v\n", directory)
-		fmt.Printf("Verbose:      %v\n", verboseBool)
-		fmt.Printf("KeywordsOnly: %v\n", keywordsOnlyBool)
-		fmt.Printf("Completion:   %v\n", completionBool)
-                fmt.Printf("Cmdline:      %v\n", cmdline)
-	}
-
-	return &Args{ConfigFile: configFile,
+	return &Args{
+		ConfigFile:   configFile,
 		Keyword:      keyword,
 		Clean:        cleanBool,
 		List:         listBool,
@@ -157,16 +152,41 @@ Examples:
 		Verbose:      verboseBool,
 		KeywordsOnly: keywordsOnlyBool,
 		Completion:   completionBool,
-                Cmdline:      cmdline}
+		Cmdline:      cmdline,
+	}
 }
 
-func getDefaultConfigurationFilename() string {
-	const default_config = ".curdrc"
-	var home string
-	if runtime.GOOS == "windows" {
-		home = os.Getenv("USERPROFILE")
-	} else {
-		home = os.Getenv("HOME")
+func logVerbose(a *Args) {
+	if a.Verbose {
+		fmt.Printf("ConfigFile:   %v\n", a.ConfigFile)
+		fmt.Printf("Keyword:      %v\n", a.Keyword)
+		fmt.Printf("Clean:        %v\n", a.Clean)
+		fmt.Printf("List:         %v\n", a.List)
+		fmt.Printf("Read:         %v\n", a.Read)
+		fmt.Printf("Remove:       %v\n", a.Remove)
+		fmt.Printf("Save:         %v\n", a.Save)
+		fmt.Printf("Directory:    %v\n", a.Directory)
+		fmt.Printf("Verbose:      %v\n", a.Verbose)
+		fmt.Printf("KeywordsOnly: %v\n", a.KeywordsOnly)
+		fmt.Printf("Completion:   %v\n", a.Completion)
+		fmt.Printf("Cmdline:      %v\n", a.Cmdline)
 	}
-	return filepath.Join(home, default_config)
+}
+
+func NewArgs() *Args {
+	defaultConfig := getDefaultConfigurationFilename()
+
+	const VERSION = "1.2.4"
+	versionUser := fmt.Sprintf("Curd %v", VERSION)
+	usage := generateUsage(VERSION, defaultConfig)
+
+	arguments, err := parseDocoptArgs(usage, versionUser)
+	if err != nil {
+		// This error is used to signal main to exit gracefully after printing help/version
+		return nil
+	}
+
+	args := mapArguments(arguments, defaultConfig)
+	logVerbose(args)
+	return args
 }

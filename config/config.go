@@ -1,10 +1,9 @@
 package config
 
 import (
-	"io/ioutil"
 	"os"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
@@ -16,16 +15,13 @@ func (c *Config) readConfig() error {
 	c.Paths = make(map[string]string)
 
 	if _, err := os.Stat(c.ConfigFile); err == nil {
-		content, err := ioutil.ReadFile(c.ConfigFile)
+		content, err := os.ReadFile(c.ConfigFile)
 		if err != nil {
 			return err
 		}
-		m := make(map[interface{}]interface{})
-		err = yaml.Unmarshal(content, &m)
-		if err == nil {
-			for k, v := range m {
-				c.Paths[k.(string)] = v.(string)
-			}
+		err = yaml.Unmarshal(content, &c.Paths)
+		if err != nil {
+			return err
 		}
 	}
 	return nil
@@ -36,7 +32,7 @@ func (c *Config) WriteConfig() error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(c.ConfigFile, content, 0644)
+	err = os.WriteFile(c.ConfigFile, content, 0644)
 	if err != nil {
 		return err
 	}
