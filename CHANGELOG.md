@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-06-14
+
+### Fixed
+- Bumped reported version to 2.0.1 to match the published release tag
+- Republished the module so the Go proxy serves the corrected `/v2` content (including the CHANGELOG `/v2` migration note)
+
 ## [2.0.0] - 2024-06-14
 
 ### Changed (Breaking)
