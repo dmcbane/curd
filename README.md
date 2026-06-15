@@ -8,7 +8,7 @@ The name CURD?  It is one character off from curr which is the name of the origi
 
 CURD is written in [Go](https://golang.org/) so you'll need to have it installed to build it.  Once [Go is installed](https://golang.org/doc/install) and GOROOT is added to your path, the following command will install CURD.
 
-    go install github.com/dmcbane/curd/v2@latest
+    go install github.com/dmcbane/curd/v2@v2.0.1
 
 ## Integration
 
