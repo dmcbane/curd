@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/dmcbane/curd/args"
-	"github.com/dmcbane/curd/config"
+	"github.com/dmcbane/curd/v2/args"
+	"github.com/dmcbane/curd/v2/config"
 )
 
 func ExecuteCommand(a args.Args, c config.Config) error {

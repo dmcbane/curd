@@ -1,4 +1,4 @@
-module github.com/dmcbane/curd
+module github.com/dmcbane/curd/v2
 
 go 1.18
 

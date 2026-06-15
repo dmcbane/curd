@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/dmcbane/curd/args"
-	"github.com/dmcbane/curd/config"
-	"github.com/dmcbane/curd/execute"
+	"github.com/dmcbane/curd/v2/args"
+	"github.com/dmcbane/curd/v2/config"
+	"github.com/dmcbane/curd/v2/execute"
 )
 
 var curdlog *log.Logger

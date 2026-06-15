@@ -20,7 +20,7 @@ CURD (Change to one of a User's Recurrent Directories) is a Go-based command-lin
 # Or: unset GOROOT && go test ./...
 
 # Install the application to GOPATH/bin
-unset GOROOT && go install github.com/dmcbane/curd@latest
+unset GOROOT && go install github.com/dmcbane/curd/v2@latest
 
 # Run tests for a specific package
 unset GOROOT && go test ./config

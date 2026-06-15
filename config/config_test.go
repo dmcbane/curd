@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/dmcbane/curd/config"
+	"github.com/dmcbane/curd/v2/config"
 	"gopkg.in/yaml.v3"
 )
 
