@@ -1,0 +1,175 @@
+---
+layout: default
+title: CURD - Fast Directory Navigation Tool
+---
+
+<div class="hero">
+  <h1>🚀 CURD</h1>
+  <p><strong>Navigate directories at the speed of thought</strong></p>
+  <p>Save your favorite directories with memorable keywords and jump to them instantly from anywhere in your terminal.</p>
+
+  <div style="margin-top: 2rem;">
+    <a href="https://github.com/dmcbane/curd/releases/latest" class="btn" style="background: white; color: #667eea; padding: 0.75rem 2rem; border-radius: 25px; text-decoration: none; display: inline-block; margin: 0 0.5rem;">⬇️ Download</a>
+    <a href="https://github.com/dmcbane/curd" class="btn" style="background: rgba(255,255,255,0.2); color: white; padding: 0.75rem 2rem; border-radius: 25px; text-decoration: none; display: inline-block; margin: 0 0.5rem; border: 2px solid white;">View on GitHub</a>
+  </div>
+</div>
+
+<div class="nav-menu">
+  <ul>
+    <li><a href="#quick-start">Quick Start</a></li>
+    <li><a href="installation.html">Installation</a></li>
+    <li><a href="commands.html">Commands</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="https://github.com/dmcbane/curd/blob/main/CHANGELOG.md">Changelog</a></li>
+  </ul>
+</div>
+
+<div class="terminal">
+  <div class="terminal-header">
+    <span class="terminal-button red"></span>
+    <span class="terminal-button yellow"></span>
+    <span class="terminal-button green"></span>
+  </div>
+  <pre><code><span style="color: #0f0">$</span> <span style="color: #fff">cd ~/projects/my-awesome-project</span>
+<span style="color: #0f0">$</span> <span style="color: #fff">curd save awesome</span>
+<span style="color: #888"># Directory saved!</span>
+
+<span style="color: #0f0">$</span> <span style="color: #fff">cd /some/other/deep/directory/path</span>
+<span style="color: #0f0">$</span> <span style="color: #fff">curr awesome</span>
+<span style="color: #888"># Instantly back to my-awesome-project! 🎯</span></code></pre>
+</div>
+
+<div class="features">
+  <div class="feature">
+    <h3>⚡ Lightning Fast</h3>
+    <p>No database, no algorithms, just pure speed. Jump to any saved directory instantly.</p>
+  </div>
+  <div class="feature">
+    <h3>🎯 Predictable</h3>
+    <p>Your keywords always take you to the exact same place. No guessing, no surprises.</p>
+  </div>
+  <div class="feature">
+    <h3>🔒 Secure</h3>
+    <p>Config files are protected with user-only permissions. Path traversal protection built-in.</p>
+  </div>
+  <div class="feature">
+    <h3>🌍 Cross-Platform</h3>
+    <p>Works seamlessly on Windows, macOS, and Linux with your favorite shell.</p>
+  </div>
+  <div class="feature">
+    <h3>🎨 Simple</h3>
+    <p>No learning curve. Save directories, jump to them. That's it.</p>
+  </div>
+  <div class="feature">
+    <h3>🚫 No Dependencies</h3>
+    <p>Single binary with no external dependencies. Just download and run.</p>
+  </div>
+</div>
+
+<div class="quick-start" id="quick-start">
+  <h2>Quick Start in 3 Steps</h2>
+
+  <div class="installation-methods">
+    <div class="method">
+      <h3>1️⃣ Install CURD</h3>
+      <pre><code>go install github.com/dmcbane/curd@latest</code></pre>
+      <p>Or <a href="https://github.com/dmcbane/curd/releases">download the binary</a></p>
+    </div>
+
+    <div class="method">
+      <h3>2️⃣ Add to Shell</h3>
+      <p>Add to ~/.bashrc or ~/.zshrc:</p>
+      <pre><code>function curr() {
+  D=$(curd "$@")
+  cd "${D}"
+}</code></pre>
+    </div>
+
+    <div class="method">
+      <h3>3️⃣ Start Using</h3>
+      <pre><code># Save current directory
+curd save project
+
+# Jump to it anytime
+curr project</code></pre>
+    </div>
+  </div>
+</div>
+
+## Why CURD?
+
+Unlike tools that try to predict where you want to go based on usage patterns, CURD gives you complete control. You explicitly save the directories you care about and access them with memorable keywords you choose.
+
+### Perfect for:
+- 👨‍💻 **Developers** - Jump between projects, configs, and documentation
+- 🎨 **Designers** - Quick access to asset folders and project files
+- 📊 **Data Scientists** - Navigate between datasets and notebooks
+- 🔧 **System Administrators** - Fast access to log directories and configs
+- 📝 **Writers** - Organize and access different writing projects
+
+## Example Workflow
+
+```bash
+# Morning setup
+cd ~/work/backend && curd save be
+cd ~/work/frontend && curd save fe
+cd ~/work/database && curd save db
+cd ~/.config && curd save config
+
+# Throughout the day
+curr be        # Jump to backend
+curr fe        # Jump to frontend
+curr db        # Jump to database
+curr config    # Jump to config files
+
+# End of day cleanup
+curd list      # See all saved paths
+curd clean     # Remove non-existent paths
+```
+
+## What's New in v2.0.0
+
+<div style="background: #fff5f5; border: 2px solid #ff6b6b; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
+  <h3 style="color: #ff6b6b; margin-top: 0;">⚠️ Breaking Changes</h3>
+  <ul>
+    <li>Config files now use restrictive permissions (0600)</li>
+    <li>Path traversal sequences (..) are now rejected for security</li>
+  </ul>
+</div>
+
+### 🔒 Security Improvements
+- Protected configuration files
+- Path traversal attack prevention
+- Environment variable validation
+
+### 🐛 Bug Fixes
+- Fixed error handling throughout
+- Resolved list command edge cases
+- Corrected Go module compatibility
+
+### ✨ Improvements
+- Refactored for better maintainability
+- Enhanced error messages
+- Added comprehensive test suite
+
+[View full changelog →](https://github.com/dmcbane/curd/blob/main/CHANGELOG.md)
+
+## Get Started
+
+<div style="text-align: center; margin: 3rem 0;">
+  <a href="installation.html" style="background: #667eea; color: white; padding: 1rem 2rem; border-radius: 25px; text-decoration: none; display: inline-block; font-size: 1.1rem;">📦 Installation Guide</a>
+  <a href="commands.html" style="background: #f8f9fa; color: #667eea; padding: 1rem 2rem; border-radius: 25px; text-decoration: none; display: inline-block; font-size: 1.1rem; margin-left: 1rem;">📖 Documentation</a>
+</div>
+
+<div class="site-footer">
+  <p>Made with ❤️ by <a href="https://github.com/dmcbane">H. Dale McBane</a></p>
+  <p>
+    <a href="https://github.com/dmcbane/curd">GitHub</a> •
+    <a href="https://github.com/dmcbane/curd/releases">Releases</a> •
+    <a href="https://github.com/dmcbane/curd/issues">Issues</a> •
+    <a href="https://github.com/dmcbane/curd/blob/main/LICENSE">MIT License</a>
+  </p>
+  <p style="margin-top: 1rem; font-size: 0.9rem;">
+    CURD is inspired by autojump, fasd, and z, but focuses on simplicity and explicit control.
+  </p>
+</div>
