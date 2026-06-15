@@ -106,10 +106,10 @@ func TestNewConfig_ReadConfig(t *testing.T) {
 
 func TestConfig_WriteConfig(t *testing.T) {
 	testCases := []struct {
-		name          string
-		initialPaths  map[string]string
+		name            string
+		initialPaths    map[string]string
 		expectedContent string
-		expectError   bool
+		expectError     bool
 	}{
 		{
 			name: "write multiple paths",
@@ -118,13 +118,13 @@ func TestConfig_WriteConfig(t *testing.T) {
 				"key2": "value2",
 			},
 			expectedContent: "key1: value1\nkey2: value2\n", // Order might vary, need to handle
-			expectError: false,
+			expectError:     false,
 		},
 		{
-			name:          "write empty paths",
-			initialPaths:  map[string]string{},
+			name:            "write empty paths",
+			initialPaths:    map[string]string{},
 			expectedContent: "null\n", // YAML marshals empty map to null
-			expectError:   false,
+			expectError:     false,
 		},
 	}
 

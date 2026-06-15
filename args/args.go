@@ -25,18 +25,23 @@ type Args struct {
 }
 
 func getDefaultConfigurationFilename() string {
-	const default_config = ".curdrc"
+	const defaultConfig = ".curdrc"
 	var home string
 	if runtime.GOOS == "windows" {
 		home = os.Getenv("USERPROFILE")
 	} else {
 		home = os.Getenv("HOME")
 	}
-	return filepath.Join(home, default_config)
+	if home == "" {
+		// Fall back to current directory if home is not defined
+		home = "."
+		fmt.Fprintf(os.Stderr, "Warning: HOME/USERPROFILE not set, using current directory for config\n")
+	}
+	return filepath.Join(home, defaultConfig)
 }
 
 func generateUsage(version, defaultConfig string) string {
-	usage := `CURD - Change to a User's Recurring Directory <<version>>
+	usage := `CURD - Change to one of a User's Recurrent Directories <<version>>
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 
@@ -176,7 +181,7 @@ func logVerbose(a *Args) {
 func NewArgs() *Args {
 	defaultConfig := getDefaultConfigurationFilename()
 
-	const VERSION = "1.2.4"
+	const VERSION = "2.0.0"
 	versionUser := fmt.Sprintf("Curd %v", VERSION)
 	usage := generateUsage(VERSION, defaultConfig)
 

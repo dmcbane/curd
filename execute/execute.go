@@ -1,7 +1,6 @@
 package execute
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -36,16 +35,23 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 		{
 			// sort the keys of the arguments map
 			var keys []string
-			for k, _ := range c.Paths {
+			for k := range c.Paths {
 				keys = append(keys, k)
 			}
 			sort.Strings(keys)
 			if a.KeywordsOnly {
-				result := strings.Join(keys[1:], "  ")
+				// Filter out "default" keyword instead of skipping first element
+				var nonDefaultKeys []string
+				for _, k := range keys {
+					if k != "default" {
+						nonDefaultKeys = append(nonDefaultKeys, k)
+					}
+				}
+				result := strings.Join(nonDefaultKeys, "  ")
 				fmt.Println(result)
 			} else {
 				for _, v := range keys {
-					fmt.Printf("%s - %s\n", v, (c.Paths)[v])
+					fmt.Printf("%s - %s\n", v, c.Paths[v])
 				}
 			}
 		}
@@ -66,10 +72,25 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 				}
 				c.Paths[a.Keyword] = pwd
 			} else {
+				// Validate path to prevent directory traversal
+				// Check for .. before and after cleaning
+				if strings.Contains(a.Directory, "..") {
+					return fmt.Errorf("invalid directory path %q: path traversal not allowed", a.Directory)
+				}
+
+				cleanPath := filepath.Clean(a.Directory)
+				if strings.Contains(cleanPath, "..") {
+					return fmt.Errorf("invalid directory path %q: path traversal not allowed", a.Directory)
+				}
+
 				if _, err := os.Stat(a.Directory); err != nil { // Check if directory exists
 					return fmt.Errorf("directory %q does not exist: %w", a.Directory, err) // Return error
 				}
-				abspath, _ := filepath.Abs(filepath.Clean(a.Directory))
+
+				abspath, err := filepath.Abs(cleanPath)
+				if err != nil {
+					return fmt.Errorf("failed to get absolute path for %q: %w", a.Directory, err)
+				}
 				c.Paths[a.Keyword] = abspath
 			}
 			if err := c.WriteConfig(); err != nil {
@@ -78,10 +99,10 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 		}
 	default: // a.Read
 		{
-			if val, exists := (c.Paths)[a.Keyword]; exists {
+			if val, exists := c.Paths[a.Keyword]; exists {
 				fmt.Println(val)
 			} else {
-				return errors.New(fmt.Sprintf("%s does not exist in %s", a.Keyword, c.ConfigFile))
+				return fmt.Errorf("%s does not exist in %s", a.Keyword, c.ConfigFile)
 			}
 		}
 	}
@@ -107,123 +128,120 @@ func containsAny(slice []string, checks ...string) bool {
 	return false
 }
 
+// getAvailableKeywords returns sorted keywords from paths, excluding "default"
+func getAvailableKeywords(paths map[string]string) []string {
+	var sortedKeys []string
+	for k := range paths {
+		if k != "default" {
+			sortedKeys = append(sortedKeys, k)
+		}
+	}
+	sort.Strings(sortedKeys)
+	return sortedKeys
+}
+
+// addBasicOptions adds standard command-line options based on context
+func addBasicOptions(currentValues []string, prefix string) []string {
+	var options []string
+
+	// Add help and version options
+	if prefix == "--" {
+		options = append(options, "--help", "--version")
+	} else if prefix == "-" {
+		options = append(options, "-h", "--help", "-V", "--version")
+	} else if prefix == "" {
+		// When no prefix, include both short and long forms
+		options = append(options, "-h", "--help", "-V", "--version")
+	}
+
+	// Add config option if not present
+	if !contains(currentValues, "--config") {
+		options = append(options, "--config")
+	}
+
+	// Add verbose option if not present
+	if !containsAny(currentValues, "-v", "--verbose") {
+		if prefix == "-" || prefix == "" {
+			options = append(options, "-v", "--verbose")
+		} else if prefix == "--" {
+			options = append(options, "--verbose")
+		}
+	}
+
+	return options
+}
+
 func BashCompletionHelper(cmdline []string, paths map[string]string) {
 	currentValues := cmdline[1:]
 	var availableCompletions []string
-	// drop the first value since it is always curd
 
-	// completions are only available if not one of these
-	if !containsAny(currentValues, "-h", "--help", "help", "-V", "--version", "version", "completion", "comp") {
-		if contains(currentValues, "--") { // starting a long option
-			availableCompletions = append(availableCompletions, "--help")
-			availableCompletions = append(availableCompletions, "--version")
-			if !contains(currentValues, "--config") {
-				availableCompletions = append(availableCompletions, "--config")
-			}
-			if !contains(currentValues, "--verbose") {
-				availableCompletions = append(availableCompletions, "--verbose")
-			}
-			if contains(currentValues, "save") && !contains(currentValues, "--dir") {
-				availableCompletions = append(availableCompletions, "--dir")
-			}
+	// Skip completion if help/version/completion commands are present
+	if containsAny(currentValues, "-h", "--help", "help", "-V", "--version", "version", "completion", "comp") {
+		fmt.Println(strings.Join(availableCompletions, " "))
+		return
+	}
 
-			if containsAny(currentValues, "ls", "list") {
-				if !containsAny(currentValues, "-k", "--keywords-only") {
-					availableCompletions = append(availableCompletions, "--keywords-only")
-				}
-			}
-		} else if contains(currentValues, "-") { // starting a long or short options
-			availableCompletions = append(availableCompletions, "-h")
-			availableCompletions = append(availableCompletions, "--help")
-			availableCompletions = append(availableCompletions, "-V")
-			availableCompletions = append(availableCompletions, "--version")
-			if !contains(currentValues, "--config") {
-				availableCompletions = append(availableCompletions, "--config")
-			}
-			if !containsAny(currentValues, "-v", "--verbose") {
-				availableCompletions = append(availableCompletions, "-v")
-				availableCompletions = append(availableCompletions, "--verbose")
-			}
-			if contains(currentValues, "save") && !contains(currentValues, "--dir") {
-				availableCompletions = append(availableCompletions, "--dir")
-			}
+	// Determine what kind of completion is needed
+	var prefix string
+	if contains(currentValues, "--") {
+		prefix = "--"
+	} else if contains(currentValues, "-") {
+		prefix = "-"
+	}
 
-			if containsAny(currentValues, "ls", "list") {
-				if !containsAny(currentValues, "-k", "--keywords-only") {
-					availableCompletions = append(availableCompletions, "-k", "--keywords-only")
-				}
-			}
+	// Add basic options (help, version, config, verbose)
+	availableCompletions = append(availableCompletions, addBasicOptions(currentValues, prefix)...)
 
-		} else {
-			availableCompletions = append(availableCompletions, "-h")
-			availableCompletions = append(availableCompletions, "--help")
-			availableCompletions = append(availableCompletions, "-V")
-			availableCompletions = append(availableCompletions, "--version")
-			if !contains(currentValues, "--config") {
-				availableCompletions = append(availableCompletions, "--config")
-			} else {
-				var configFile string
-				for i, s := range currentValues {
-					if s == "--config" {
-						if len(currentValues) > i+1 {
-							configFile = currentValues[i+1]
-						}
-						break
-					}
-				}
-				c, err := config.NewConfig(configFile)
-				if err == nil {
+	// Handle special case: --config was provided, load that config
+	if contains(currentValues, "--config") && prefix == "" {
+		for i, s := range currentValues {
+			if s == "--config" && len(currentValues) > i+1 {
+				if c, err := config.NewConfig(currentValues[i+1]); err == nil {
 					paths = c.Paths
 				}
-			}
-
-			if !containsAny(currentValues, "-v", "--verbose") {
-				availableCompletions = append(availableCompletions, "-v")
-				availableCompletions = append(availableCompletions, "--verbose")
-			}
-			// if none of the command group exists
-			if !containsAny(currentValues, "clean", "ls", "list", "save", "rm", "remove") {
-				// add all commands to the completions list
-				availableCompletions = append(availableCompletions, "clean", "ls", "list", "save", "rm", "remove")
-				// add all defined paths to the completions list
-				var sortedKeys []string
-				for k := range paths {
-					if k != "default" {
-						sortedKeys = append(sortedKeys, k)
-					}
-				}
-				sort.Strings(sortedKeys)
-				availableCompletions = append(availableCompletions, sortedKeys...)
-			} else { // at least one command exists, so let's find out which
-				// if contains(currentValues, "clean") {
-				//   // nothing to do for clean
-				// }
-
-				if containsAny(currentValues, "ls", "list") {
-					if !containsAny(currentValues, "-k", "--keywords-only") {
-						availableCompletions = append(availableCompletions, "-k", "--keywords-only")
-					}
-				}
-
-				if contains(currentValues, "save") {
-					if !contains(currentValues, "--dir") {
-						availableCompletions = append(availableCompletions, "--dir")
-					}
-				}
-
-				if containsAny(currentValues, "rm", "remove") {
-					// add all defined paths to the completions list
-					var sortedKeys []string
-					for k := range paths {
-						if k != "default" {
-							sortedKeys = append(sortedKeys, k)
-						}
-					}
-					sort.Strings(sortedKeys)
-					availableCompletions = append(availableCompletions, sortedKeys...)
-				}
+				break
 			}
 		}
 	}
+
+	// Command-specific completions
+	if prefix == "" {
+		// Check which command is being used
+		hasCommand := containsAny(currentValues, "clean", "ls", "list", "save", "rm", "remove")
+
+		if !hasCommand {
+			// No command yet - offer all commands and keywords
+			availableCompletions = append(availableCompletions, "clean", "ls", "list", "save", "rm", "remove")
+			availableCompletions = append(availableCompletions, getAvailableKeywords(paths)...)
+		} else {
+			// Command-specific options
+			if containsAny(currentValues, "ls", "list") && !containsAny(currentValues, "-k", "--keywords-only") {
+				availableCompletions = append(availableCompletions, "-k", "--keywords-only")
+			}
+			if contains(currentValues, "save") && !contains(currentValues, "--dir") {
+				availableCompletions = append(availableCompletions, "--dir")
+			}
+			if containsAny(currentValues, "rm", "remove") {
+				availableCompletions = append(availableCompletions, getAvailableKeywords(paths)...)
+			}
+		}
+	} else if prefix == "--" {
+		// Long option specific completions
+		if contains(currentValues, "save") && !contains(currentValues, "--dir") {
+			availableCompletions = append(availableCompletions, "--dir")
+		}
+		if containsAny(currentValues, "ls", "list") && !contains(currentValues, "--keywords-only") {
+			availableCompletions = append(availableCompletions, "--keywords-only")
+		}
+	} else if prefix == "-" {
+		// Short and long option completions
+		if contains(currentValues, "save") && !contains(currentValues, "--dir") {
+			availableCompletions = append(availableCompletions, "--dir")
+		}
+		if containsAny(currentValues, "ls", "list") && !containsAny(currentValues, "-k", "--keywords-only") {
+			availableCompletions = append(availableCompletions, "-k", "--keywords-only")
+		}
+	}
+
 	fmt.Println(strings.Join(availableCompletions, " "))
 }

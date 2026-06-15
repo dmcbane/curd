@@ -32,7 +32,7 @@ func (c *Config) WriteConfig() error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(c.ConfigFile, content, 0644)
+	err = os.WriteFile(c.ConfigFile, content, 0600)
 	if err != nil {
 		return err
 	}
@@ -41,9 +41,8 @@ func (c *Config) WriteConfig() error {
 
 func NewConfig(filename string) (*Config, error) {
 	c := Config{ConfigFile: filename}
-	if err := c.readConfig(); err == nil {
-		return &c, nil
-	} else {
+	if err := c.readConfig(); err != nil {
 		return nil, err
 	}
+	return &c, nil
 }

@@ -122,18 +122,18 @@ func TestExecuteCommand_List(t *testing.T) {
 	cfg, _ := config.NewConfig(configFilePath)
 
 	testCases := []struct {
-		name         string
-		args         args.Args
+		name           string
+		args           args.Args
 		expectedOutput string
 	}{
 		{
-			name: "list all (default)",
-			args: args.Args{List: true, ConfigFile: configFilePath, KeywordsOnly: false},
+			name:           "list all (default)",
+			args:           args.Args{List: true, ConfigFile: configFilePath, KeywordsOnly: false},
 			expectedOutput: "default - /default/path\nproj1 - /path/to/proj1\nproj2 - /path/to/proj2\n",
 		},
 		{
-			name: "list keywords only",
-			args: args.Args{List: true, ConfigFile: configFilePath, KeywordsOnly: true},
+			name:           "list keywords only",
+			args:           args.Args{List: true, ConfigFile: configFilePath, KeywordsOnly: true},
 			expectedOutput: "proj1  proj2\n", // Default keyword is excluded
 		},
 	}
@@ -286,28 +286,28 @@ func TestExecuteCommand_Read(t *testing.T) {
 	cfg, _ := config.NewConfig(configFilePath)
 
 	testCases := []struct {
-		name          string
-		args          args.Args
+		name           string
+		args           args.Args
 		expectedOutput string
-		expectError   bool
+		expectError    bool
 	}{
 		{
-			name:          "read existing keyword",
-			args:          args.Args{Read: true, Keyword: "proj1", ConfigFile: configFilePath},
+			name:           "read existing keyword",
+			args:           args.Args{Read: true, Keyword: "proj1", ConfigFile: configFilePath},
 			expectedOutput: "/path/to/proj1\n",
-			expectError:   false,
+			expectError:    false,
 		},
 		{
-			name:          "read non-existent keyword",
-			args:          args.Args{Read: true, Keyword: "nonexistent", ConfigFile: configFilePath},
+			name:           "read non-existent keyword",
+			args:           args.Args{Read: true, Keyword: "nonexistent", ConfigFile: configFilePath},
 			expectedOutput: "",
-			expectError:   true,
+			expectError:    true,
 		},
 		{
-			name:          "read default keyword",
-			args:          args.Args{Read: true, Keyword: "default", ConfigFile: configFilePath},
+			name:           "read default keyword",
+			args:           args.Args{Read: true, Keyword: "default", ConfigFile: configFilePath},
 			expectedOutput: "/default/path\n",
-			expectError:   false,
+			expectError:    false,
 		},
 	}
 
@@ -343,43 +343,43 @@ func TestBashCompletionHelper(t *testing.T) {
 	paths := map[string]string{"foo": "/path/to/foo", "bar": "/path/to/bar", "default": "/default/path"}
 
 	testCases := []struct {
-		name          string
-		cmdline       []string
+		name           string
+		cmdline        []string
 		expectedOutput string
 	}{
 		{
-			name:          "completion for -- option",
-			cmdline:       []string{"curd", "--"},
+			name:           "completion for -- option",
+			cmdline:        []string{"curd", "--"},
 			expectedOutput: "--help --version --config --verbose\n",
 		},
 		{
-			name:          "completion for - option",
-			cmdline:       []string{"curd", "-"},
+			name:           "completion for - option",
+			cmdline:        []string{"curd", "-"},
 			expectedOutput: "-h --help -V --version --config -v --verbose\n",
 		},
 		{
-			name:          "completion for command",
-			cmdline:       []string{"curd", ""},
+			name:           "completion for command",
+			cmdline:        []string{"curd", ""},
 			expectedOutput: "-h --help -V --version --config -v --verbose clean ls list save rm remove bar foo\n",
 		},
 		{
-			name:          "completion for ls",
-			cmdline:       []string{"curd", "ls", ""},
+			name:           "completion for ls",
+			cmdline:        []string{"curd", "ls", ""},
 			expectedOutput: "-h --help -V --version --config -v --verbose -k --keywords-only\n",
 		},
 		{
-			name:          "completion for rm",
-			cmdline:       []string{"curd", "rm", ""},
+			name:           "completion for rm",
+			cmdline:        []string{"curd", "rm", ""},
 			expectedOutput: "-h --help -V --version --config -v --verbose bar foo\n",
 		},
 		{
-			name:          "completion for save",
-			cmdline:       []string{"curd", "save", ""},
+			name:           "completion for save",
+			cmdline:        []string{"curd", "save", ""},
 			expectedOutput: "-h --help -V --version --config -v --verbose --dir\n",
 		},
 		{
-			name:          "completion for save --dir",
-			cmdline:       []string{"curd", "save", "--dir", ""},
+			name:           "completion for save --dir",
+			cmdline:        []string{"curd", "save", "--dir", ""},
 			expectedOutput: "-h --help -V --version --config -v --verbose\n",
 		},
 	}
