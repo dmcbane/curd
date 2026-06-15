@@ -20,7 +20,7 @@ CURD (Change to one of a User's Recurrent Directories) is a Go-based command-lin
 # Or: unset GOROOT && go test ./...
 
 # Install the application to GOPATH/bin
-unset GOROOT && go install github.com/dmcbane/curd/v2@v2.0.1
+unset GOROOT && go install github.com/dmcbane/curd/v2@v2.1.0
 
 # Run tests for a specific package
 unset GOROOT && go test ./config
@@ -56,7 +56,7 @@ The main entry point (`main.go`) orchestrates these packages:
 - **Configuration Storage**: Paths are stored in a YAML file (default: `~/.curdrc`) as a map of keyword->path pairs
 - **Default Keyword**: The "default" keyword is special and used when no keyword is specified
 - **Shell Integration**: Since Go programs can't change the parent shell's directory, CURD outputs the path to STDOUT, and shell wrapper functions (`curr.*` files) handle the actual directory change
-- **Bash Completion**: Implemented via `BashCompletionHelper` in execute package and `curd_completion.bash` script
+- **Shell Completion**: Dynamic suggestion helper is `BashCompletionHelper` in the execute package (invoked via `curd completion`). Completion scripts for bash/fish/zsh are generated on demand by `GenerateCompletions` in `execute/completions.go` (invoked via `curd completions [<shell>]`)
 
 ## Testing
 

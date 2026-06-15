@@ -191,6 +191,35 @@ curd comp CMDLINE ...  # Alias
 
 This command is used by shell completion scripts and typically not called directly by users.
 
+### completions
+
+Generate a shell completion script for `curd` and `curr`.
+
+**Syntax:**
+```bash
+curd completions [<shell>]
+```
+
+**Options:**
+- `<shell>` - The shell to generate completion for: `bash`, `fish`, or `zsh`. If omitted, the shell is detected from the `SHELL` environment variable.
+
+The script is written to standard output, so redirect or source it as appropriate for your shell.
+
+**Examples:**
+```bash
+# Bash — source on shell startup
+source <(curd completions bash)
+
+# Zsh — install onto the fpath
+curd completions zsh > ~/.zsh/completions/_curd
+
+# Fish — install into fish's completions directory
+curd completions fish > ~/.config/fish/completions/curd.fish
+
+# Auto-detect the current shell from $SHELL
+curd completions
+```
+
 ## Global Options
 
 These options can be used with most commands:

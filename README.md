@@ -8,7 +8,7 @@ The name CURD?  It is one character off from curr which is the name of the origi
 
 CURD is written in [Go](https://golang.org/) so you'll need to have it installed to build it.  Once [Go is installed](https://golang.org/doc/install) and GOROOT is added to your path, the following command will install CURD.
 
-    go install github.com/dmcbane/curd/v2@v2.0.1
+    go install github.com/dmcbane/curd/v2@v2.1.0
 
 ## Integration
 
@@ -38,17 +38,30 @@ To actually make CURD useful, it needs to be integrated into the terminal/comman
     }
 
 
-### Bash Completion
+### Shell Completion
 
-If you have bash completion installed on your system, you can source the src/github.com/dmcbane/curd/curd_completion.bash file from your ~/.bashrc file to enable bash completion for curr/curd.
+CURD can generate completion scripts for bash, fish, and zsh with the `completions` command. If you omit the shell, CURD detects it from the `SHELL` environment variable.
 
-ZSH users can use the bash completion file by adding the following to their ~/.zshrc file.
+**Bash:** source the generated script from your `~/.bashrc`:
 
+```bash
+curd completions bash > ~/.curd_completion.bash
+echo 'source ~/.curd_completion.bash' >> ~/.bashrc
 ```
-autoload bashcompinit
-bashcompinit
-source ~/go/src/github.com/dmcbane/curd/curd_completion.bash
+
+**Zsh:** drop the script onto your `$fpath` (or source it from `~/.zshrc`):
+
+```zsh
+curd completions zsh > ~/.zsh/completions/_curd
 ```
+
+**Fish:** write the script into fish's completions directory:
+
+```fish
+curd completions fish > ~/.config/fish/completions/curd.fish
+```
+
+Both `curd` and `curr` get command, option, and keyword completion.
 
 ## How It Works
 
@@ -100,13 +113,14 @@ or the clean command to remove non existant paths that are defined:
 Typing `curd --help` will display the help screen for CURD which lists all available commands.
 
 ```
-CURD - Change to a User's Recurring Directory 2.0.1
+CURD - Change to one of a User's Recurrent Directories 2.1.0
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 
 Usage:
     curd clean [--config <file>] [--verbose]
     curd (completion | comp) CMDLINE ...
+    curd completions [<shell>]
     curd (ls | list) [-k | --keywords-only] [--config <file>] [--verbose]
     curd (rm | remove) [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
@@ -152,6 +166,10 @@ Examples:
 
     Used by shell completion scripts.
         curd comp curd ls -
+
+    Generate a shell completion script. SHELL may be bash, fish, or zsh; if
+    omitted, the shell is detected from the SHELL environment variable.
+        curd completions bash > ~/.curd_completion.bash
 
 ```
 

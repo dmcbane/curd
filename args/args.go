@@ -22,6 +22,9 @@ type Args struct {
 	KeywordsOnly bool
 	Completion   bool
 	Cmdline      []string
+
+	GenerateCompletions bool
+	Shell               string
 }
 
 func getDefaultConfigurationFilename() string {
@@ -48,6 +51,7 @@ Save and return to paths you visit often.
 Usage:
     curd clean [--config <file>] [--verbose]
     curd (completion | comp) CMDLINE ...
+    curd completions [<shell>]
     curd (ls | list) [-k | --keywords-only] [--config <file>] [--verbose]
     curd (rm | remove) [KEYWORD] [--config <file>] [--verbose]
     curd save [KEYWORD] [--dir <directory>] [--config <file>] [--verbose]
@@ -94,6 +98,10 @@ Examples:
     Used by shell completion scripts.
         curd comp curd ls -
 
+    Generate a shell completion script. SHELL may be bash, fish, or zsh; if
+    omitted, the shell is detected from the SHELL environment variable.
+        curd completions bash > ~/.curd_completion.bash
+
 `
 
 	usage = strings.Replace(usage, "<<version>>", version, 1)
@@ -129,7 +137,9 @@ func mapArguments(arguments map[string]interface{}, defaultConfig string) *Args 
 	removeBool := arguments["remove"].(bool) || arguments["rm"].(bool)
 	saveBool := arguments["save"].(bool)
 	completionBool := arguments["completion"].(bool) || arguments["comp"].(bool)
-	readBool := !cleanBool && !listBool && !removeBool && !saveBool && !completionBool
+	generateCompletionsBool := arguments["completions"].(bool)
+	shell, _ := arguments["<shell>"].(string)
+	readBool := !cleanBool && !listBool && !removeBool && !saveBool && !completionBool && !generateCompletionsBool
 	verboseBool := arguments["--verbose"].(bool)
 	cmdline := arguments["CMDLINE"].([]string)
 
@@ -158,6 +168,9 @@ func mapArguments(arguments map[string]interface{}, defaultConfig string) *Args 
 		KeywordsOnly: keywordsOnlyBool,
 		Completion:   completionBool,
 		Cmdline:      cmdline,
+
+		GenerateCompletions: generateCompletionsBool,
+		Shell:               shell,
 	}
 }
 
@@ -175,13 +188,15 @@ func logVerbose(a *Args) {
 		fmt.Printf("KeywordsOnly: %v\n", a.KeywordsOnly)
 		fmt.Printf("Completion:   %v\n", a.Completion)
 		fmt.Printf("Cmdline:      %v\n", a.Cmdline)
+		fmt.Printf("GenerateCompletions: %v\n", a.GenerateCompletions)
+		fmt.Printf("Shell:               %v\n", a.Shell)
 	}
 }
 
 func NewArgs() *Args {
 	defaultConfig := getDefaultConfigurationFilename()
 
-	const VERSION = "2.0.1"
+	const VERSION = "2.1.0"
 	versionUser := fmt.Sprintf("Curd %v", VERSION)
 	usage := generateUsage(VERSION, defaultConfig)
 

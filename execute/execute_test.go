@@ -14,6 +14,25 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// captureStdout runs fn while capturing everything written to os.Stdout and
+// returns it as a string.
+func captureStdout(t *testing.T, fn func()) string {
+	t.Helper()
+	oldStdout := os.Stdout
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("Failed to create pipe: %v", err)
+	}
+	os.Stdout = w
+	defer func() { os.Stdout = oldStdout }()
+
+	fn()
+
+	w.Close()
+	out, _ := io.ReadAll(r)
+	return string(out)
+}
+
 // Helper function to create a temporary config file for testing
 func createTempConfigFile(t *testing.T, content map[string]string) string {
 	t.Helper()
@@ -336,6 +355,114 @@ func TestExecuteCommand_Read(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestGenerateCompletions(t *testing.T) {
+	testCases := []struct {
+		shell    string
+		contains []string
+	}{
+		{
+			shell: "bash",
+			contains: []string{
+				"complete -F _completions_curd curd",
+				"complete -F _completions_curr curr",
+				"curd completion --",
+				"curd ls -k",
+			},
+		},
+		{
+			shell: "zsh",
+			contains: []string{
+				"#compdef curd curr",
+				"compdef _curd_complete curd",
+				"compdef _curr_complete curr",
+				"curd completion --",
+				"curd ls -k",
+			},
+		},
+		{
+			shell: "fish",
+			contains: []string{
+				"complete -c curd",
+				"complete -c curr",
+				"curd completion --",
+				"curd ls -k",
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.shell, func(t *testing.T) {
+			var genErr error
+			out := captureStdout(t, func() {
+				genErr = execute.GenerateCompletions(tc.shell)
+			})
+			if genErr != nil {
+				t.Fatalf("GenerateCompletions(%q) returned error: %v", tc.shell, genErr)
+			}
+			for _, want := range tc.contains {
+				if !strings.Contains(out, want) {
+					t.Errorf("GenerateCompletions(%q) output missing %q.\nGot:\n%s", tc.shell, want, out)
+				}
+			}
+		})
+	}
+}
+
+func TestGenerateCompletions_Unsupported(t *testing.T) {
+	out := captureStdout(t, func() {
+		err := execute.GenerateCompletions("powershell")
+		if err == nil {
+			t.Error("Expected an error for unsupported shell, but got none")
+		}
+	})
+	if out != "" {
+		t.Errorf("Expected no output for unsupported shell, got %q", out)
+	}
+}
+
+func TestGenerateCompletions_DetectFromEnv(t *testing.T) {
+	t.Setenv("SHELL", "/usr/bin/fish")
+	var genErr error
+	out := captureStdout(t, func() {
+		genErr = execute.GenerateCompletions("")
+	})
+	if genErr != nil {
+		t.Fatalf("GenerateCompletions(\"\") returned error: %v", genErr)
+	}
+	if !strings.Contains(out, "complete -c curd") {
+		t.Errorf("Expected fish completion when SHELL=/usr/bin/fish, got:\n%s", out)
+	}
+}
+
+func TestGenerateCompletions_DetectUnset(t *testing.T) {
+	t.Setenv("SHELL", "")
+	out := captureStdout(t, func() {
+		err := execute.GenerateCompletions("")
+		if err == nil {
+			t.Error("Expected an error when shell cannot be detected, but got none")
+		}
+	})
+	if out != "" {
+		t.Errorf("Expected no output when shell cannot be detected, got %q", out)
+	}
+}
+
+func TestExecuteCommand_GenerateCompletions(t *testing.T) {
+	var execErr error
+	out := captureStdout(t, func() {
+		execErr = execute.ExecuteCommand(
+			args.Args{GenerateCompletions: true, Shell: "bash"},
+			config.Config{},
+		)
+	})
+	if execErr != nil {
+		t.Fatalf("ExecuteCommand(GenerateCompletions) failed: %v", execErr)
+	}
+	if !strings.Contains(out, "complete -F _completions_curd curd") {
+		t.Errorf("Expected bash completion output, got:\n%s", out)
 	}
 }
 

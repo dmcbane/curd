@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-06-14
+
+### Added
+- `curd completions [<shell>]` command that generates a shell completion script for `bash`, `fish`, or `zsh`. When the shell argument is omitted it is detected from the `SHELL` environment variable. The generated scripts wire up completion for both `curd` and `curr` using the existing `curd completion` dynamic helper.
+
+### Removed
+- The static `curd_completion.bash` file. Bash completion is now produced on demand with `curd completions bash`, which keeps a single source of truth and adds fish/zsh support.
+
 ## [2.0.1] - 2026-06-14
 
 ### Fixed

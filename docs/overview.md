@@ -25,7 +25,7 @@ title: CURD - Fast Directory Navigation
 - 🌍 **Cross-Platform** - Works on Windows, macOS, and Linux
 - 🐚 **Multi-Shell Support** - Compatible with Bash, Zsh, Fish, PowerShell, and Command Prompt
 - 🔒 **Secure** - Config files are protected with user-only permissions
-- 🎯 **Tab Completion** - Full bash completion support for commands and keywords
+- 🎯 **Tab Completion** - Generate bash, fish, and zsh completion for commands and keywords
 - 🧹 **Auto-Cleanup** - Remove non-existent paths with the clean command
 
 ## 🚀 Quick Start
@@ -34,7 +34,7 @@ title: CURD - Fast Directory Navigation
 
 Using Go:
 ```bash
-go install github.com/dmcbane/curd/v2@v2.0.1
+go install github.com/dmcbane/curd/v2@v2.1.0
 ```
 
 Or download the latest binary from the [releases page](https://github.com/dmcbane/curd/releases).
@@ -147,13 +147,19 @@ curd save config --dir=~/.config
 
 ## 🔧 Advanced Features
 
-### Bash Completion
+### Shell Completion
 
-Enable tab completion for commands and keywords:
+Generate a completion script for bash, fish, or zsh and enable tab completion for commands and keywords. Omit the shell to auto-detect it from `$SHELL`:
 
 ```bash
-# Add to ~/.bashrc
-source ~/go/src/github.com/dmcbane/curd/curd_completion.bash
+# bash — add to ~/.bashrc
+source <(curd completions bash)
+
+# zsh — add to ~/.zshrc
+source <(curd completions zsh)
+
+# fish
+curd completions fish > ~/.config/fish/completions/curd.fish
 ```
 
 ### Custom Configuration File

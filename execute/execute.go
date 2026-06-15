@@ -31,6 +31,12 @@ func ExecuteCommand(a args.Args, c config.Config) error {
 		{
 			BashCompletionHelper(a.Cmdline, c.Paths)
 		}
+	case a.GenerateCompletions:
+		{
+			if err := GenerateCompletions(a.Shell); err != nil {
+				return err
+			}
+		}
 	case a.List:
 		{
 			// sort the keys of the arguments map

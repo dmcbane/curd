@@ -20,7 +20,7 @@ CURD requires either:
 If you have Go installed, this is the easiest method:
 
 ```bash
-go install github.com/dmcbane/curd/v2@v2.0.1
+go install github.com/dmcbane/curd/v2@v2.1.0
 ```
 
 This will install the `curd` binary to `$GOPATH/bin` (usually `~/go/bin`). Make sure this directory is in your PATH.
@@ -61,10 +61,8 @@ function curr() {
   cd "${D}"
 }
 
-# Optional: Enable bash completion
-if [ -f ~/go/src/github.com/dmcbane/curd/curd_completion.bash ]; then
-  source ~/go/src/github.com/dmcbane/curd/curd_completion.bash
-fi
+# Optional: Enable tab completion for curd and curr
+source <(curd completions bash)
 ```
 
 Then reload your configuration:
@@ -82,12 +80,8 @@ function curr() {
   cd "${D}"
 }
 
-# Optional: Enable bash completion in zsh
-if [ -f ~/go/src/github.com/dmcbane/curd/curd_completion.bash ]; then
-  autoload bashcompinit
-  bashcompinit
-  source ~/go/src/github.com/dmcbane/curd/curd_completion.bash
-fi
+# Optional: Enable tab completion for curd and curr
+source <(curd completions zsh)
 ```
 
 Then reload:
@@ -104,6 +98,12 @@ function curr
     set -l D (curd $argv)
     cd "$D"
 end
+```
+
+Optionally, generate the completion script for `curd` and `curr`:
+
+```fish
+curd completions fish > ~/.config/fish/completions/curd.fish
 ```
 
 ### PowerShell
@@ -144,7 +144,7 @@ After installation and shell setup:
    ```bash
    curd --version
    ```
-   Should output: `Curd 2.0.0` (or current version)
+   Should output: `Curd 2.1.0` (or current version)
 
 2. **Test saving a directory:**
    ```bash

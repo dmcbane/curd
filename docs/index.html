@@ -73,7 +73,7 @@ title: CURD - Fast Directory Navigation Tool
   <div class="installation-methods">
     <div class="method">
       <h3>1️⃣ Install CURD</h3>
-      <pre><code>go install github.com/dmcbane/curd/v2@v2.0.1</code></pre>
+      <pre><code>go install github.com/dmcbane/curd/v2@v2.1.0</code></pre>
       <p>Or <a href="https://github.com/dmcbane/curd/releases">download the binary</a></p>
     </div>
 
@@ -83,7 +83,10 @@ title: CURD - Fast Directory Navigation Tool
       <pre><code>function curr() {
   D=$(curd "$@")
   cd "${D}"
-}</code></pre>
+}
+
+# Optional tab completion
+source &lt;(curd completions bash)</code></pre>
     </div>
 
     <div class="method">
@@ -127,6 +130,13 @@ curr config    # Jump to config files
 curd list      # See all saved paths
 curd clean     # Remove non-existent paths
 ```
+
+## What's New in v2.1.0
+
+<div style="background: #f0fff4; border: 2px solid #38a169; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
+  <h3 style="color: #38a169; margin-top: 0;">🐚 Shell Completion Generator</h3>
+  <p style="margin-bottom: 0;">Generate completion scripts for bash, fish, and zsh with <code>curd completions [&lt;shell&gt;]</code>. Omit the shell to auto-detect it from <code>$SHELL</code>. The old static <code>curd_completion.bash</code> file is gone.</p>
+</div>
 
 ## What's New in v2.0.0
 
