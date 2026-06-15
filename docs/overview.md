@@ -5,6 +5,8 @@ title: CURD - Fast Directory Navigation
 
 # CURD - Change to one of a User's Recurrent Directories
 
+[← Back to Home](index.html)
+
 [![GitHub Release](https://img.shields.io/github/v/release/dmcbane/curd)](https://github.com/dmcbane/curd/releases)
 [![License](https://img.shields.io/github/license/dmcbane/curd)](https://github.com/dmcbane/curd/blob/main/LICENSE)
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.18-blue)](https://go.dev/)
@@ -199,6 +201,8 @@ CURD is released under the MIT License. See the [LICENSE](https://github.com/dmc
 ## 🙏 Acknowledgments
 
 CURD is inspired by tools like [autojump](https://github.com/wting/autojump), [fasd](https://github.com/clvv/fasd), and [z](https://github.com/rupa/z), but focuses on simplicity and explicit control over your directory bookmarks.
+
+[← Back to Home](index.html)
 
 ---
 
