@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.0] - 2024-06-14
 
 ### Changed (Breaking)
+- **BREAKING**: Module path changed to `github.com/dmcbane/curd/v2` as required by Go for v2+ modules. Install with `go install github.com/dmcbane/curd/v2@latest` and import internal packages from the `/v2` path
 - **BREAKING**: Config file permissions changed from 0644 to 0600 for improved security (user-only access)
 - **BREAKING**: Path validation now rejects directory traversal attempts (paths containing "..")
 
