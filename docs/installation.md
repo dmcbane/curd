@@ -20,7 +20,7 @@ CURD requires either:
 If you have Go installed, this is the easiest method:
 
 ```bash
-go install github.com/dmcbane/curd/v2@latest
+go install github.com/dmcbane/curd/v2@v2.0.1
 ```
 
 This will install the `curd` binary to `$GOPATH/bin` (usually `~/go/bin`). Make sure this directory is in your PATH.

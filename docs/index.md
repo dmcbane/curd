@@ -32,7 +32,7 @@ title: CURD - Fast Directory Navigation
 
 Using Go:
 ```bash
-go install github.com/dmcbane/curd/v2@latest
+go install github.com/dmcbane/curd/v2@v2.0.1
 ```
 
 Or download the latest binary from the [releases page](https://github.com/dmcbane/curd/releases).
