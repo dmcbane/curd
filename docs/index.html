@@ -73,20 +73,30 @@ title: CURD - Fast Directory Navigation Tool
   <div class="installation-methods">
     <div class="method">
       <h3>1️⃣ Install CURD</h3>
-      <pre><code>go install github.com/dmcbane/curd/v2@v2.1.0</code></pre>
+      <pre><code>go install github.com/dmcbane/curd/v2@v2.2.0</code></pre>
       <p>Or <a href="https://github.com/dmcbane/curd/releases">download the binary</a></p>
     </div>
 
     <div class="method">
       <h3>2️⃣ Add to Shell</h3>
-      <p>Add to ~/.bashrc or ~/.zshrc:</p>
+      <p>Add to ~/.bashrc (Bash):</p>
       <pre><code>function curr() {
   D=$(curd "$@")
   cd "${D}"
 }
 
-# Optional tab completion
-source &lt;(curd completions bash)</code></pre>
+# Tab completion of saved keywords
+if [ -n "$BASH_VERSION" ]; then
+  _curr_complete() {
+    COMPREPLY=()
+    if [ "$COMP_CWORD" -eq 1 ]; then
+      COMPREPLY=($(compgen -W "$(curd ls -k)" \
+        -- "${COMP_WORDS[COMP_CWORD]}"))
+    fi
+  }
+  complete -F _curr_complete curr
+fi</code></pre>
+      <p>Using another shell? See the <a href="installation.html">installation guide</a> for Zsh, Fish, PowerShell, and csh/tcsh.</p>
     </div>
 
     <div class="method">
@@ -130,6 +140,13 @@ curr config    # Jump to config files
 curd list      # See all saved paths
 curd clean     # Remove non-existent paths
 ```
+
+## What's New in v2.2.0
+
+<div style="background: #f0fff4; border: 2px solid #38a169; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
+  <h3 style="color: #38a169; margin-top: 0;">🐚 Keyword Tab Completion for curr</h3>
+  <p style="margin-bottom: 0;">The <code>curr</code> integration scripts now include tab completion of your saved keywords in every supported shell — Bash, Zsh, Fish, PowerShell, and csh/tcsh — with new ready-to-use <code>curr.zsh</code> and <code>curr.csh</code> scripts.</p>
+</div>
 
 ## What's New in v2.1.0
 
