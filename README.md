@@ -8,7 +8,7 @@ The name CURD?  It is one character off from curr which is the name of the origi
 
 CURD is written in [Go](https://golang.org/) so you'll need to have it installed to build it.  Once [Go is installed](https://golang.org/doc/install) and GOROOT is added to your path, the following command will install CURD.
 
-    go install github.com/dmcbane/curd/v2@v2.1.0
+    go install github.com/dmcbane/curd/v2@v2.2.0
 
 ## Integration
 
@@ -21,7 +21,7 @@ To actually make CURD useful, it needs to be integrated into the terminal/comman
     set /p VV=<%TEMP%\vv.tmp
     cd /D "%VV%"
 
-**Windows Powershell:** Add the contents of [curr.ps1](https://raw.githubusercontent.com/dmcbane/curd/master/curr.ps1) into your $profile.  This will create a function that will change to the directory specified by CURD.
+**Windows Powershell:** Add the contents of [curr.ps1](https://raw.githubusercontent.com/dmcbane/curd/master/curr.ps1) into your $profile.  This will create a function that will change to the directory specified by CURD and register tab completion of saved keywords for `curr`.
 
     Function Get-Curd-Directory {
       [CmdletBinding()]
@@ -30,12 +30,54 @@ To actually make CURD useful, it needs to be integrated into the terminal/comman
           Set-Location "$content"
     };Set-Alias curr Get-Curd-Directory -Description "Change the current directory to the selected curd directory."
 
-**Mac/Unix/Linux sh, bash or zsh:** Add the contents of [curr.sh](https://raw.githubusercontent.com/dmcbane/curd/master/curr.sh) into your .profile, .bashrc or .zshrc to create a function that will change to the directory specified by CURD.
+    Register-ArgumentCompleter -CommandName Get-Curd-Directory -ParameterName arg -ScriptBlock {
+        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+        (curd ls -k) -split '\s+' |
+            Where-Object { $_ -and $_ -like "$wordToComplete*" } |
+            ForEach-Object {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+            }
+    }
+
+**Mac/Unix/Linux sh or bash:** Add the contents of [curr.sh](https://raw.githubusercontent.com/dmcbane/curd/master/curr.sh) into your .profile or .bashrc to create a function that will change to the directory specified by CURD.  Under bash it also registers tab completion of saved keywords for `curr`.
 
     function curr() {
       D=$(curd "$@")
       cd "${D}"
     }
+
+    # Tab completion for curr (bash only).
+    if [ -n "$BASH_VERSION" ]; then
+      _curr_complete() {
+        COMPREPLY=()
+        if [ "$COMP_CWORD" -eq 1 ]; then
+          local cur=${COMP_WORDS[COMP_CWORD]}
+          COMPREPLY=($(compgen -W "$(curd ls -k)" -- "$cur"))
+        fi
+        return 0
+      }
+      complete -F _curr_complete curr
+    fi
+
+**Zsh:** Add the contents of [curr.zsh](https://raw.githubusercontent.com/dmcbane/curd/master/curr.zsh) into your .zshrc.  It defines `curr` and registers keyword completion through zsh's `compdef` system (ensure `autoload -U compinit && compinit` runs earlier in your .zshrc).
+
+    function curr() {
+      local D
+      D=$(curd "$@")
+      cd "${D}"
+    }
+
+    _curr_complete() {
+      local -a keywords
+      keywords=(${(z)"$(curd ls -k)"})
+      compadd -a keywords
+    }
+    compdef _curr_complete curr
+
+**csh/tcsh:** Add the contents of [curr.csh](https://raw.githubusercontent.com/dmcbane/curd/master/curr.csh) into your .cshrc or .tcshrc.  Since csh has no functions, `curr` is an alias, and the `complete` builtin (tcsh) provides keyword completion.
+
+    alias curr 'cd "`curd \!*`"'
+    complete curr 'p/1/`curd ls -k`/'
 
 
 ### Shell Completion
@@ -113,7 +155,7 @@ or the clean command to remove non existant paths that are defined:
 Typing `curd --help` will display the help screen for CURD which lists all available commands.
 
 ```
-CURD - Change to one of a User's Recurrent Directories 2.1.0
+CURD - Change to one of a User's Recurrent Directories 2.2.0
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 

@@ -23,9 +23,9 @@ title: CURD - Fast Directory Navigation
 - 🚀 **Instant Navigation** - Jump to any saved directory with a single command
 - 🔖 **Keyword Bookmarks** - Save directories with memorable keywords
 - 🌍 **Cross-Platform** - Works on Windows, macOS, and Linux
-- 🐚 **Multi-Shell Support** - Compatible with Bash, Zsh, Fish, PowerShell, and Command Prompt
+- 🐚 **Multi-Shell Support** - Compatible with Bash, Zsh, Fish, PowerShell, csh/tcsh, and Command Prompt
 - 🔒 **Secure** - Config files are protected with user-only permissions
-- 🎯 **Tab Completion** - Generate bash, fish, and zsh completion for commands and keywords
+- 🎯 **Tab Completion** - `curr` completes saved keywords in every supported shell, plus `curd completions` for command and option completion
 - 🧹 **Auto-Cleanup** - Remove non-existent paths with the clean command
 
 ## 🚀 Quick Start
@@ -34,21 +34,49 @@ title: CURD - Fast Directory Navigation
 
 Using Go:
 ```bash
-go install github.com/dmcbane/curd/v2@v2.1.0
+go install github.com/dmcbane/curd/v2@v2.2.0
 ```
 
 Or download the latest binary from the [releases page](https://github.com/dmcbane/curd/releases).
 
 ### Shell Integration
 
-Add the appropriate function to your shell configuration:
+Add the appropriate function to your shell configuration. Each snippet defines `curr` and registers tab completion of saved keywords; the [Installation Guide](installation.html) has the full per-shell setup.
 
-#### Bash/Zsh (`~/.bashrc` or `~/.zshrc`)
+#### Bash (`~/.bashrc`)
 ```bash
 function curr() {
   D=$(curd "$@")
   cd "${D}"
 }
+
+# Tab completion for curr: suggest saved keywords (bash only).
+if [ -n "$BASH_VERSION" ]; then
+  _curr_complete() {
+    COMPREPLY=()
+    if [ "$COMP_CWORD" -eq 1 ]; then
+      COMPREPLY=($(compgen -W "$(curd ls -k)" -- "${COMP_WORDS[COMP_CWORD]}"))
+    fi
+  }
+  complete -F _curr_complete curr
+fi
+```
+
+#### Zsh (`~/.zshrc`)
+```zsh
+function curr() {
+  local D
+  D=$(curd "$@")
+  cd "${D}"
+}
+
+# Tab completion for curr: suggest saved keywords.
+_curr_complete() {
+  local -a keywords
+  keywords=(${(z)"$(curd ls -k)"})
+  compadd -a keywords
+}
+compdef _curr_complete curr
 ```
 
 #### Fish (`~/.config/fish/functions/curr.fish`)
@@ -57,6 +85,9 @@ function curr
     set -l D (curd $argv)
     cd "$D"
 end
+
+# Tab completion for curr: suggest saved keywords.
+complete -c curr -f -a '(curd ls -k | string split -n " ")'
 ```
 
 #### PowerShell (`$profile`)
@@ -67,6 +98,24 @@ Function Get-Curd-Directory {
       $content = if ($arg) {curd $arg} Else {curd}
       Set-Location "$content"
 };Set-Alias curr Get-Curd-Directory
+
+# Tab completion for curr: suggest saved keywords.
+Register-ArgumentCompleter -CommandName Get-Curd-Directory -ParameterName arg -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    (curd ls -k) -split '\s+' |
+        Where-Object { $_ -and $_ -like "$wordToComplete*" } |
+        ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+}
+```
+
+#### csh/tcsh (`~/.cshrc` or `~/.tcshrc`)
+```csh
+alias curr 'cd "`curd \!*`"'
+
+# Tab completion for curr: suggest saved keywords (tcsh).
+complete curr 'p/1/`curd ls -k`/'
 ```
 
 #### Windows Command Prompt

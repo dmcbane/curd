@@ -20,7 +20,7 @@ CURD requires either:
 If you have Go installed, this is the easiest method:
 
 ```bash
-go install github.com/dmcbane/curd/v2@v2.1.0
+go install github.com/dmcbane/curd/v2@v2.2.0
 ```
 
 This will install the `curd` binary to `$GOPATH/bin` (usually `~/go/bin`). Make sure this directory is in your PATH.
@@ -51,6 +51,8 @@ The binary will be created in the current directory. Move it to a location in yo
 
 After installing the `curd` binary, you need to set up shell integration to use the `curr` command for directory navigation.
 
+Each `curr.*` script in the repository is self-contained: it defines the `curr` wrapper **and** registers tab completion of your saved keywords (from `curd ls -k`) for `curr`. The snippets below mirror those scripts. To complete `curd`'s own commands and options as well, also source `curd completions <shell>` where shown.
+
 ### Bash
 
 Add to your `~/.bashrc`:
@@ -61,7 +63,20 @@ function curr() {
   cd "${D}"
 }
 
-# Optional: Enable tab completion for curd and curr
+# Tab completion for curr: suggest saved keywords (bash only).
+if [ -n "$BASH_VERSION" ]; then
+  _curr_complete() {
+    COMPREPLY=()
+    if [ "$COMP_CWORD" -eq 1 ]; then
+      local cur=${COMP_WORDS[COMP_CWORD]}
+      COMPREPLY=($(compgen -W "$(curd ls -k)" -- "$cur"))
+    fi
+    return 0
+  }
+  complete -F _curr_complete curr
+fi
+
+# Optional: also complete curd's commands and options
 source <(curd completions bash)
 ```
 
@@ -72,20 +87,29 @@ source ~/.bashrc
 
 ### Zsh
 
-Add to your `~/.zshrc`:
+Add to your `~/.zshrc` (make sure `autoload -U compinit && compinit` runs earlier in the file so `compdef` is available):
 
-```bash
+```zsh
 function curr() {
+  local D
   D=$(curd "$@")
   cd "${D}"
 }
 
-# Optional: Enable tab completion for curd and curr
+# Tab completion for curr: suggest saved keywords.
+_curr_complete() {
+  local -a keywords
+  keywords=(${(z)"$(curd ls -k)"})
+  compadd -a keywords
+}
+compdef _curr_complete curr
+
+# Optional: also complete curd's commands and options
 source <(curd completions zsh)
 ```
 
 Then reload:
-```bash
+```zsh
 source ~/.zshrc
 ```
 
@@ -98,9 +122,12 @@ function curr
     set -l D (curd $argv)
     cd "$D"
 end
+
+# Tab completion for curr: suggest saved keywords.
+complete -c curr -f -a '(curd ls -k | string split -n " ")'
 ```
 
-Optionally, generate the completion script for `curd` and `curr`:
+Optionally, generate the completion script for `curd` itself:
 
 ```fish
 curd completions fish > ~/.config/fish/completions/curd.fish
@@ -118,11 +145,32 @@ Function Get-Curd-Directory {
   Set-Location "$content"
 }
 Set-Alias curr Get-Curd-Directory -Description "Change to a curd directory"
+
+# Tab completion for curr: suggest saved keywords.
+Register-ArgumentCompleter -CommandName Get-Curd-Directory -ParameterName arg -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    (curd ls -k) -split '\s+' |
+        Where-Object { $_ -and $_ -like "$wordToComplete*" } |
+        ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+}
 ```
 
 Then reload:
 ```powershell
 . $profile
+```
+
+### csh/tcsh
+
+Add to your `~/.cshrc` or `~/.tcshrc`. Since csh has no functions, `curr` is an alias, and the `complete` builtin (a tcsh feature) provides keyword completion:
+
+```csh
+alias curr 'cd "`curd \!*`"'
+
+# Tab completion for curr: suggest saved keywords (tcsh).
+complete curr 'p/1/`curd ls -k`/'
 ```
 
 ### Windows Command Prompt
@@ -144,7 +192,7 @@ After installation and shell setup:
    ```bash
    curd --version
    ```
-   Should output: `Curd 2.1.0` (or current version)
+   Should output: `Curd 2.2.0` (or current version)
 
 2. **Test saving a directory:**
    ```bash

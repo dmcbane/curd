@@ -196,7 +196,7 @@ func logVerbose(a *Args) {
 func NewArgs() *Args {
 	defaultConfig := getDefaultConfigurationFilename()
 
-	const VERSION = "2.1.0"
+	const VERSION = "2.2.0"
 	versionUser := fmt.Sprintf("Curd %v", VERSION)
 	usage := generateUsage(VERSION, defaultConfig)
 

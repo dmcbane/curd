@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-06-26
+
+### Added
+- Tab completion of saved keywords for the `curr` wrapper, built directly into the example integration scripts. Sourcing `curr.sh` (bash), `curr.fish`, or `curr.ps1` (PowerShell) now both defines `curr` and registers keyword completion using `curd ls -k` as the source.
+- New example integration scripts `curr.zsh` (zsh `compdef` completion) and `curr.csh` (csh/tcsh alias with `complete` builtin), giving every supported shell a self-contained `curr` wrapper with keyword completion.
+
+### Changed
+- Documentation (README, installation guide, and overview) updated to show the self-contained `curr` snippets with completion for bash, zsh, fish, PowerShell, and csh/tcsh.
+
 ## [2.1.0] - 2026-06-14
 
 ### Added
