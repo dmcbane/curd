@@ -1,207 +1,84 @@
 ---
 layout: default
-title: CURD - Fast Directory Navigation
+title: Overview - CURD
+description: What CURD is, how it works, and the commands you'll use most.
 ---
 
-# CURD - Change to one of a User's Recurrent Directories
+# Overview
 
-[← Back to Home](index.html)
+**CURD** (*Change to one of a User's Recurrent Directories*) is a small, fast
+command-line tool for jumping to directories you visit often. Save a directory
+under a keyword once, then return to it from anywhere with a short
+`curr <keyword>` — no long paths, no fuzzy guessing.
 
 [![GitHub Release](https://img.shields.io/github/v/release/dmcbane/curd)](https://github.com/dmcbane/curd/releases)
 [![License](https://img.shields.io/github/license/dmcbane/curd)](https://github.com/dmcbane/curd/blob/main/LICENSE)
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.18-blue)](https://go.dev/)
 
-**CURD** is a lightning-fast command-line tool that lets you jump to frequently used directories with simple keywords. Stop typing long paths - save your directories once and access them instantly from anywhere.
+## How it works
 
-<div style="text-align: center; margin: 2em 0;">
-  <img src="https://asciinema.org/a/curd-demo.svg" alt="CURD Demo" style="max-width: 100%;">
-  <p><em>Jump between project directories instantly</em></p>
-</div>
+A program can't change its parent shell's working directory — once `curd`
+exits, any directory change it made is gone. CURD works around this by
+**printing** the resolved path to standard output:
 
-## ✨ Features
-
-- 🚀 **Instant Navigation** - Jump to any saved directory with a single command
-- 🔖 **Keyword Bookmarks** - Save directories with memorable keywords
-- 🌍 **Cross-Platform** - Works on Windows, macOS, and Linux
-- 🐚 **Multi-Shell Support** - Compatible with Bash, Zsh, Fish, PowerShell, csh/tcsh, and Command Prompt
-- 🔒 **Secure** - Config files are protected with user-only permissions
-- 🎯 **Tab Completion** - `curr` completes saved keywords in every supported shell, plus `curd completions` for command and option completion
-- 🧹 **Auto-Cleanup** - Remove non-existent paths with the clean command
-
-## 🚀 Quick Start
-
-### Installation
-
-Using Go:
 ```bash
-go install github.com/dmcbane/curd/v2@v2.2.0
+cd "$(curd)"        # change to the default directory
+cd "$(curd go)"     # change to the directory saved as "go"
 ```
 
-Or download the latest binary from the [releases page](https://github.com/dmcbane/curd/releases).
-
-### Shell Integration
-
-Add the `curr` function to your shell configuration. This snippet (for Bash, in `~/.bashrc`) defines `curr` and registers tab completion of your saved keywords:
+That is too much to type for everyday use, so the shell integration wraps it in
+a `curr` function — plus tab completion for your saved keywords. After the
+one-time setup, the two commands above become simply:
 
 ```bash
-function curr() {
-  D=$(curd "$@")
-  cd "${D}"
-}
-
-# Tab completion for curr: suggest saved keywords (bash only).
-if [ -n "$BASH_VERSION" ]; then
-  _curr_complete() {
-    COMPREPLY=()
-    if [ "$COMP_CWORD" -eq 1 ]; then
-      COMPREPLY=($(compgen -W "$(curd ls -k)" -- "${COMP_WORDS[COMP_CWORD]}"))
-    fi
-  }
-  complete -F _curr_complete curr
-fi
-```
-
-Using Zsh, Fish, PowerShell, csh/tcsh, or the Windows Command Prompt? See the [Installation Guide](installation.html) for the equivalent setup with tab completion.
-
-## 📖 Usage Examples
-
-### Save Directories
-```bash
-# Save current directory with a keyword
-cd ~/projects/myapp
-curd save myapp
-
-# Save a specific directory
-curd save docs --dir=~/Documents
-
-# Save current directory as default (no keyword needed)
-cd ~/workspace
-curd save
-```
-
-### Navigate to Saved Directories
-```bash
-# Jump to a saved directory
-curr myapp
-
-# Jump to default directory
 curr
-
-# Jump to docs
-curr docs
+curr go
 ```
 
-### Manage Saved Paths
-```bash
-# List all saved paths
-curd list
+See the [Installation Guide](installation.html) for the `curr` setup in Bash,
+Zsh, Fish, PowerShell, and csh/tcsh.
 
-# List only keywords
-curd list -k
+## Commands at a glance
 
-# Remove a saved path
-curd remove oldproject
+| Command | What it does |
+| --- | --- |
+| `curd save [keyword]` | Save the current directory (or `--dir <path>`) under a keyword |
+| `curr [keyword]` | Jump to a saved directory (the shell wrapper) |
+| `curd ls` / `curd ls -k` | List saved keyword→path pairs, or just the keywords |
+| `curd rm <keyword>` | Remove a saved bookmark |
+| `curd clean` | Drop bookmarks whose paths no longer exist |
 
-# Clean up non-existent paths
-curd clean
-```
+The special `default` keyword is used whenever you omit one. Full details are in
+the [Command Reference](commands.html).
 
-## 🎯 Common Use Cases
-
-### Development Workflow
-```bash
-# Set up your project directories
-cd ~/src/frontend && curd save fe
-cd ~/src/backend && curd save be
-cd ~/src/database && curd save db
-
-# Quick navigation during development
-curr fe  # Jump to frontend
-curr be  # Jump to backend
-curr db  # Jump to database
-```
-
-### Document Management
-```bash
-# Organize frequently accessed folders
-curd save docs --dir=~/Documents
-curd save downloads --dir=~/Downloads
-curd save projects --dir=~/Projects
-curd save config --dir=~/.config
-```
-
-## 🔧 Advanced Features
-
-### Shell Completion
-
-Generate a completion script for bash, fish, or zsh and enable tab completion for commands and keywords. Omit the shell to auto-detect it from `$SHELL`:
+## Useful options
 
 ```bash
-# bash — add to ~/.bashrc
+# Generate command/keyword completion for your shell (bash, fish, zsh)
 source <(curd completions bash)
 
-# zsh — add to ~/.zshrc
-source <(curd completions zsh)
+# Use an alternate configuration file instead of ~/.curdrc
+curd --config ~/work-curdrc ls
 
-# fish
-curd completions fish > ~/.config/fish/completions/curd.fish
-```
-
-### Custom Configuration File
-
-Use a different configuration file:
-```bash
-curd --config ~/my-curd-config.yaml list
-```
-
-### Verbose Output
-
-See detailed information about operations:
-```bash
+# Print extra detail about what curd is doing
 curd save myproject --verbose
 ```
 
-## 🔒 Security
+## Configuration & security
 
-CURD v2.0.0 includes important security improvements:
+Bookmarks live in a YAML file (default `~/.curdrc`) as keyword→path pairs. The
+file is created with user-only `0600` permissions, and CURD rejects paths
+containing `..` to prevent directory-traversal surprises.
 
-- **Protected Config Files** - Configuration files use 0600 permissions (user-only access)
-- **Path Traversal Protection** - Prevents directory traversal attacks
-- **Environment Validation** - Safely handles missing HOME/USERPROFILE variables
+## Learn more
 
-## 📚 Documentation
-
-- [Installation Guide](installation.html)
-- [Configuration](configuration.html)
-- [Command Reference](commands.html)
-- [Shell Integration](shells.html)
-- [FAQ](faq.html)
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
-
-- [Report Issues](https://github.com/dmcbane/curd/issues)
-- [View Source](https://github.com/dmcbane/curd)
+- [Installation Guide](installation.html) — per-shell setup with tab completion
+- [Command Reference](commands.html) — every command and flag
+- [FAQ](faq.html) — common questions
 - [Changelog](https://github.com/dmcbane/curd/blob/main/CHANGELOG.md)
 
-## 📄 License
+## Acknowledgments
 
-CURD is released under the MIT License. See the [LICENSE](https://github.com/dmcbane/curd/blob/main/LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-CURD is inspired by tools like [autojump](https://github.com/wting/autojump), [fasd](https://github.com/clvv/fasd), and [z](https://github.com/rupa/z), but focuses on simplicity and explicit control over your directory bookmarks.
-
-[← Back to Home](index.html)
-
----
-
-<div style="text-align: center; margin-top: 3em;">
-  <p>Made with ❤️ by <a href="https://github.com/dmcbane">H. Dale McBane</a></p>
-  <p>
-    <a href="https://github.com/dmcbane/curd">GitHub</a> •
-    <a href="https://github.com/dmcbane/curd/releases">Releases</a> •
-    <a href="https://github.com/dmcbane/curd/issues">Issues</a>
-  </p>
-</div>
+CURD is inspired by [autojump](https://github.com/wting/autojump),
+[fasd](https://github.com/clvv/fasd), and [z](https://github.com/rupa/z), but
+focuses on simplicity and explicit control over your directory bookmarks.
