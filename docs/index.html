@@ -1,203 +1,159 @@
 ---
-layout: default
+layout: home
 title: CURD - Fast Directory Navigation Tool
+description: Save frequently visited directories with keywords and jump to them instantly from any shell.
 ---
 
-<div class="hero">
-  <h1>🚀 CURD</h1>
-  <p><strong>Navigate directories at the speed of thought</strong></p>
-  <p>Save your favorite directories with memorable keywords and jump to them instantly from anywhere in your terminal.</p>
+<!-- Hero -->
+<header class="hero">
+  <h1>Jump to your <span>directories</span>,<br>instantly.</h1>
+  <p class="tagline">
+    Save the directories you visit often with memorable keywords and
+    return to them from anywhere in your terminal — no long paths, no guessing.
+  </p>
+  <div class="badge-row">
+    <span class="badge green">Go</span>
+    <span class="badge blue">Cross-platform</span>
+    <span class="badge purple">Tab completion</span>
+    <span class="badge">MIT</span>
+    <span class="badge">v2.2.0</span>
+  </div>
+  <div class="hero-buttons">
+    <a href="#quickstart" class="btn btn-primary">Get Started</a>
+    <a href="https://github.com/dmcbane/curd" class="btn btn-secondary">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
 
-  <div style="margin-top: 2rem;">
-    <a href="https://github.com/dmcbane/curd/releases/latest" class="btn" style="background: white; color: #667eea; padding: 0.75rem 2rem; border-radius: 25px; text-decoration: none; display: inline-block; margin: 0 0.5rem;">⬇️ Download</a>
-    <a href="https://github.com/dmcbane/curd" class="btn" style="background: rgba(255,255,255,0.2); color: white; padding: 0.75rem 2rem; border-radius: 25px; text-decoration: none; display: inline-block; margin: 0 0.5rem; border: 2px solid white;">View on GitHub</a>
-  </div>
-</div>
-
-<div class="nav-menu">
-  <ul>
-    <li><a href="#quick-start">Quick Start</a></li>
-    <li><a href="overview.html">Overview</a></li>
-    <li><a href="installation.html">Installation</a></li>
-    <li><a href="commands.html">Commands</a></li>
-    <li><a href="faq.html">FAQ</a></li>
-    <li><a href="https://github.com/dmcbane/curd/blob/main/CHANGELOG.md">Changelog</a></li>
-  </ul>
-</div>
-
-<div class="terminal">
-  <div class="terminal-header">
-    <span class="terminal-button red"></span>
-    <span class="terminal-button yellow"></span>
-    <span class="terminal-button green"></span>
-  </div>
-  <pre><code><span style="color: #0f0">$</span> <span style="color: #fff">cd ~/projects/my-awesome-project</span>
-<span style="color: #0f0">$</span> <span style="color: #fff">curd save awesome</span>
-<span style="color: #888"># Directory saved!</span>
-
-<span style="color: #0f0">$</span> <span style="color: #fff">cd /some/other/deep/directory/path</span>
-<span style="color: #0f0">$</span> <span style="color: #fff">curr awesome</span>
-<span style="color: #888"># Instantly back to my-awesome-project! 🎯</span></code></pre>
-</div>
-
-<div class="features">
-  <div class="feature">
-    <h3>⚡ Lightning Fast</h3>
-    <p>No database, no algorithms, just pure speed. Jump to any saved directory instantly.</p>
-  </div>
-  <div class="feature">
-    <h3>🎯 Predictable</h3>
-    <p>Your keywords always take you to the exact same place. No guessing, no surprises.</p>
-  </div>
-  <div class="feature">
-    <h3>🔒 Secure</h3>
-    <p>Config files are protected with user-only permissions. Path traversal protection built-in.</p>
-  </div>
-  <div class="feature">
-    <h3>🌍 Cross-Platform</h3>
-    <p>Works seamlessly on Windows, macOS, and Linux with your favorite shell.</p>
-  </div>
-  <div class="feature">
-    <h3>🎨 Simple</h3>
-    <p>No learning curve. Save directories, jump to them. That's it.</p>
-  </div>
-  <div class="feature">
-    <h3>🚫 No Dependencies</h3>
-    <p>Single binary with no external dependencies. Just download and run.</p>
-  </div>
-</div>
-
-<div class="quick-start" id="quick-start">
-  <h2>Quick Start in 3 Steps</h2>
-
-  <div class="installation-methods">
-    <div class="method">
-      <h3>1️⃣ Install CURD</h3>
-      <pre><code>go install github.com/dmcbane/curd/v2@v2.2.0</code></pre>
-      <p>Or <a href="https://github.com/dmcbane/curd/releases">download the binary</a></p>
+  <div class="tree-block">
+    <div class="tree-header">
+      <span class="tree-dot red"></span>
+      <span class="tree-dot yellow"></span>
+      <span class="tree-dot green"></span>
     </div>
+<pre><span class="prompt">$</span> <span class="cmd">cd ~/projects/my-awesome-project</span>
+<span class="prompt">$</span> <span class="cmd">curd save awesome</span>            <span class="comment"># bookmark this directory</span>
 
-    <div class="method">
-      <h3>2️⃣ Add to Shell</h3>
-      <p>Add to ~/.bashrc (Bash):</p>
-      <pre><code>function curr() {
-  D=$(curd "$@")
-  cd "${D}"
+<span class="prompt">$</span> <span class="cmd">cd /some/other/deep/directory</span>
+<span class="prompt">$</span> <span class="cmd">curr awesome</span>                 <span class="comment"># &larr; instantly back</span>
+<span class="comment">~/projects/my-awesome-project</span></pre>
+  </div>
+</header>
+
+<!-- Features -->
+<section id="features">
+  <h2 class="section-title">Why CURD?</h2>
+  <p class="section-sub">
+    Unlike tools that guess where you want to go from usage patterns, CURD gives you
+    explicit control: you save the directories you care about and reach them by keyword.
+  </p>
+
+  <div class="features">
+    <div class="feature-card">
+      <span class="icon">&#9889;</span>
+      <h3>Lightning fast</h3>
+      <p>No database, no ranking heuristics. A single binary reads a small YAML file and prints a path. Navigation is instant.</p>
+    </div>
+    <div class="feature-card">
+      <span class="icon">&#127919;</span>
+      <h3>Predictable</h3>
+      <p>A keyword always takes you to the exact same place. No surprises, no "did you mean" — you chose the bookmark, you get it.</p>
+    </div>
+    <div class="feature-card">
+      <span class="icon">&#128278;</span>
+      <h3>Keyword bookmarks</h3>
+      <p>Save the current directory or any path under a memorable keyword with <code>curd save</code>. A special <code>default</code> keyword needs no name at all.</p>
+    </div>
+    <div class="feature-card">
+      <span class="icon">&#9000;</span>
+      <h3>Tab completion</h3>
+      <p>The <code>curr</code> wrapper completes your saved keywords in Bash, Zsh, Fish, PowerShell, and csh/tcsh. Generate command completion with <code>curd completions</code>.</p>
+    </div>
+    <div class="feature-card">
+      <span class="icon">&#127757;</span>
+      <h3>Cross-platform</h3>
+      <p>Works on Linux, macOS, and Windows across Bash, Zsh, Fish, PowerShell, csh/tcsh, and the Windows Command Prompt.</p>
+    </div>
+    <div class="feature-card">
+      <span class="icon">&#128274;</span>
+      <h3>Secure &amp; self-contained</h3>
+      <p>Config files use user-only <code>0600</code> permissions and reject <code>..</code> path traversal. No external dependencies — just download and run.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Start -->
+<section id="quickstart">
+  <h2 class="section-title">Quick Start</h2>
+  <p class="section-sub">From install to instant navigation in three steps.</p>
+
+  <p class="code-label">1. Install CURD</p>
+  <div class="code-block">
+<pre><span class="cmd">go install</span> <span class="str">github.com/dmcbane/curd/v2@v2.2.0</span>   <span class="comment"># or grab a binary from the releases page</span></pre>
+  </div>
+
+  <p class="code-label">2. Add the curr wrapper to your shell (Bash, ~/.bashrc)</p>
+  <div class="code-block">
+<pre><span class="cmd">function</span> curr() {
+  D=$(curd <span class="str">"$@"</span>)
+  <span class="cmd">cd</span> <span class="str">"${D}"</span>
 }
 
-# Tab completion of saved keywords
-if [ -n "$BASH_VERSION" ]; then
+<span class="comment"># Tab completion of saved keywords (bash only)</span>
+<span class="cmd">if</span> [ -n <span class="str">"$BASH_VERSION"</span> ]; <span class="cmd">then</span>
   _curr_complete() {
     COMPREPLY=()
-    if [ "$COMP_CWORD" -eq 1 ]; then
-      COMPREPLY=($(compgen -W "$(curd ls -k)" \
-        -- "${COMP_WORDS[COMP_CWORD]}"))
-    fi
+    <span class="cmd">if</span> [ <span class="str">"$COMP_CWORD"</span> -eq 1 ]; <span class="cmd">then</span>
+      COMPREPLY=($(compgen <span class="flag">-W</span> <span class="str">"$(curd ls -k)"</span> -- <span class="str">"${COMP_WORDS[COMP_CWORD]}"</span>))
+    <span class="cmd">fi</span>
   }
-  complete -F _curr_complete curr
-fi</code></pre>
-      <p>Using another shell? See the <a href="installation.html">installation guide</a> for Zsh, Fish, PowerShell, and csh/tcsh.</p>
-    </div>
-
-    <div class="method">
-      <h3>3️⃣ Start Using</h3>
-      <pre><code># Save current directory
-curd save project
-
-# Jump to it anytime
-curr project</code></pre>
-    </div>
+  <span class="cmd">complete</span> <span class="flag">-F</span> _curr_complete curr
+<span class="cmd">fi</span></pre>
   </div>
-</div>
-
-## Why CURD?
-
-Unlike tools that try to predict where you want to go based on usage patterns, CURD gives you complete control. You explicitly save the directories you care about and access them with memorable keywords you choose.
-
-### Perfect for:
-- 👨‍💻 **Developers** - Jump between projects, configs, and documentation
-- 🎨 **Designers** - Quick access to asset folders and project files
-- 📊 **Data Scientists** - Navigate between datasets and notebooks
-- 🔧 **System Administrators** - Fast access to log directories and configs
-- 📝 **Writers** - Organize and access different writing projects
-
-## Example Workflow
-
-```bash
-# Morning setup
-cd ~/work/backend && curd save be
-cd ~/work/frontend && curd save fe
-cd ~/work/database && curd save db
-cd ~/.config && curd save config
-
-# Throughout the day
-curr be        # Jump to backend
-curr fe        # Jump to frontend
-curr db        # Jump to database
-curr config    # Jump to config files
-
-# End of day cleanup
-curd list      # See all saved paths
-curd clean     # Remove non-existent paths
-```
-
-## What's New in v2.2.0
-
-<div style="background: #f0fff4; border: 2px solid #38a169; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
-  <h3 style="color: #38a169; margin-top: 0;">🐚 Keyword Tab Completion for curr</h3>
-  <p style="margin-bottom: 0;">The <code>curr</code> integration scripts now include tab completion of your saved keywords in every supported shell — Bash, Zsh, Fish, PowerShell, and csh/tcsh — with new ready-to-use <code>curr.zsh</code> and <code>curr.csh</code> scripts.</p>
-</div>
-
-## What's New in v2.1.0
-
-<div style="background: #f0fff4; border: 2px solid #38a169; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
-  <h3 style="color: #38a169; margin-top: 0;">🐚 Shell Completion Generator</h3>
-  <p style="margin-bottom: 0;">Generate completion scripts for bash, fish, and zsh with <code>curd completions [&lt;shell&gt;]</code>. Omit the shell to auto-detect it from <code>$SHELL</code>. The old static <code>curd_completion.bash</code> file is gone.</p>
-</div>
-
-## What's New in v2.0.0
-
-<div style="background: #fff5f5; border: 2px solid #ff6b6b; border-radius: 8px; padding: 1.5rem; margin: 2rem 0;">
-  <h3 style="color: #ff6b6b; margin-top: 0;">⚠️ Breaking Changes</h3>
-  <ul>
-    <li>Config files now use restrictive permissions (0600)</li>
-    <li>Path traversal sequences (..) are now rejected for security</li>
-  </ul>
-</div>
-
-### 🔒 Security Improvements
-- Protected configuration files
-- Path traversal attack prevention
-- Environment variable validation
-
-### 🐛 Bug Fixes
-- Fixed error handling throughout
-- Resolved list command edge cases
-- Corrected Go module compatibility
-
-### ✨ Improvements
-- Refactored for better maintainability
-- Enhanced error messages
-- Added comprehensive test suite
-
-[View full changelog →](https://github.com/dmcbane/curd/blob/main/CHANGELOG.md)
-
-## Get Started
-
-<div style="text-align: center; margin: 3rem 0;">
-  <a href="installation.html" style="background: #667eea; color: white; padding: 1rem 2rem; border-radius: 25px; text-decoration: none; display: inline-block; font-size: 1.1rem;">📦 Installation Guide</a>
-  <a href="commands.html" style="background: #f8f9fa; color: #667eea; padding: 1rem 2rem; border-radius: 25px; text-decoration: none; display: inline-block; font-size: 1.1rem; margin-left: 1rem;">📖 Documentation</a>
-</div>
-
-<div class="site-footer">
-  <p>Made with ❤️ by <a href="https://github.com/dmcbane">H. Dale McBane</a></p>
-  <p>
-    <a href="https://github.com/dmcbane/curd">GitHub</a> •
-    <a href="https://github.com/dmcbane/curd/releases">Releases</a> •
-    <a href="https://github.com/dmcbane/curd/issues">Issues</a> •
-    <a href="https://github.com/dmcbane/curd/blob/main/LICENSE">MIT License</a>
+  <p class="section-sub" style="margin-bottom:1.5rem;">
+    Using Zsh, Fish, PowerShell, or csh/tcsh? See the
+    <a href="installation.html">installation guide</a> for the equivalent setup with tab completion.
   </p>
-  <p style="margin-top: 1rem; font-size: 0.9rem;">
-    CURD is inspired by autojump, fasd, and z, but focuses on simplicity and explicit control.
-  </p>
-</div>
+
+  <p class="code-label">3. Save directories and jump between them</p>
+  <div class="code-block">
+<pre><span class="cmd">curd save</span> project        <span class="comment"># bookmark the current directory as "project"</span>
+<span class="cmd">curr</span> project             <span class="comment"># jump to it from anywhere</span>
+<span class="cmd">curd ls</span>                  <span class="comment"># list everything you've saved</span>
+<span class="cmd">curd clean</span>               <span class="comment"># drop bookmarks whose paths no longer exist</span></pre>
+  </div>
+
+  <div class="callout">
+    <h3>&#128056; New in v2.2.0 — keyword tab completion for curr</h3>
+    <p>The <code>curr</code> integration scripts now include tab completion of your saved keywords in every supported shell, with ready-to-use <code>curr.zsh</code> and <code>curr.csh</code> scripts alongside the existing Bash, Fish, and PowerShell versions.</p>
+  </div>
+</section>
+
+<!-- Example workflow -->
+<section>
+  <h2 class="section-title">A day with CURD</h2>
+  <p class="section-sub">Set your bookmarks once in the morning, then bounce between projects all day.</p>
+
+  <div class="code-block">
+<pre><span class="comment"># Morning setup</span>
+<span class="cmd">cd</span> ~/work/backend  &amp;&amp; <span class="cmd">curd save</span> be
+<span class="cmd">cd</span> ~/work/frontend &amp;&amp; <span class="cmd">curd save</span> fe
+<span class="cmd">cd</span> ~/work/database &amp;&amp; <span class="cmd">curd save</span> db
+<span class="cmd">cd</span> ~/.config       &amp;&amp; <span class="cmd">curd save</span> config
+
+<span class="comment"># Throughout the day — tab-complete the keyword</span>
+<span class="cmd">curr</span> be       <span class="comment"># jump to backend</span>
+<span class="cmd">curr</span> fe       <span class="comment"># jump to frontend</span>
+<span class="cmd">curr</span> config   <span class="comment"># jump to config files</span>
+
+<span class="comment"># Housekeeping</span>
+<span class="cmd">curd list</span>    <span class="comment"># see all saved paths</span>
+<span class="cmd">curd clean</span>   <span class="comment"># remove non-existent paths</span></pre>
+  </div>
+
+  <div class="hero-buttons" style="justify-content:flex-start;">
+    <a href="installation.html" class="btn btn-primary">Installation Guide</a>
+    <a href="commands.html" class="btn btn-secondary">Command Reference</a>
+  </div>
+</section>

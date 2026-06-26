@@ -1,12 +1,17 @@
 # Jekyll configuration for CURD GitHub Pages site
-title: CURD
-description: Change to one of a User's Recurrent Directories - A fast directory navigation tool
-theme: jekyll-theme-cayman
-show_downloads: true
-google_analytics:
+title: CURD - Change to one of a User's Recurrent Directories
+description: A fast, cross-platform command-line tool for jumping to frequently used directories by keyword.
+
+# No Jekyll theme: the site uses custom layouts in _layouts and assets/style.css.
 
 # Project information
 github:
   repository_url: https://github.com/dmcbane/curd
   releases_url: https://github.com/dmcbane/curd/releases
   issues_url: https://github.com/dmcbane/curd/issues
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
