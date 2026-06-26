@@ -245,16 +245,23 @@ func TestExecuteCommand_Save(t *testing.T) {
 		os.Chdir(tempDir) // Change to temp directory for testing
 		defer os.Chdir(oldPwd)
 
+		// Derive the expected path the same way ExecuteCommand does, via
+		// os.Getwd(). On some platforms (e.g. macOS, where /var is a symlink
+		// to /private/var) Getwd resolves symlinks, so comparing against the
+		// raw tempDir would spuriously fail.
+		expectedPath, err := os.Getwd()
+		if err != nil {
+			t.Fatalf("Failed to get working directory: %v", err)
+		}
+
 		mockArgs := args.Args{Save: true, Keyword: "testkey", ConfigFile: configFilePath, Directory: ""}
 		cfg, _ := config.NewConfig(configFilePath)
 
-		err := execute.ExecuteCommand(mockArgs, *cfg)
-		if err != nil {
+		if err := execute.ExecuteCommand(mockArgs, *cfg); err != nil {
 			t.Errorf("ExecuteCommand(Save current) failed: %v", err)
 		}
 
 		updatedCfg, _ := config.NewConfig(configFilePath)
-		expectedPath := tempDir
 		if val, ok := updatedCfg.Paths["testkey"]; !ok || val != expectedPath {
 			t.Errorf("Expected %q, got %q for saved path", expectedPath, val)
 		}
