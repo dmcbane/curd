@@ -41,9 +41,8 @@ Or download the latest binary from the [releases page](https://github.com/dmcban
 
 ### Shell Integration
 
-Add the appropriate function to your shell configuration. Each snippet defines `curr` and registers tab completion of saved keywords; the [Installation Guide](installation.html) has the full per-shell setup.
+Add the `curr` function to your shell configuration. This snippet (for Bash, in `~/.bashrc`) defines `curr` and registers tab completion of your saved keywords:
 
-#### Bash (`~/.bashrc`)
 ```bash
 function curr() {
   D=$(curd "$@")
@@ -62,70 +61,7 @@ if [ -n "$BASH_VERSION" ]; then
 fi
 ```
 
-#### Zsh (`~/.zshrc`)
-```zsh
-function curr() {
-  local D
-  D=$(curd "$@")
-  cd "${D}"
-}
-
-# Tab completion for curr: suggest saved keywords.
-_curr_complete() {
-  local -a keywords
-  keywords=(${(z)"$(curd ls -k)"})
-  compadd -a keywords
-}
-compdef _curr_complete curr
-```
-
-#### Fish (`~/.config/fish/functions/curr.fish`)
-```fish
-function curr
-    set -l D (curd $argv)
-    cd "$D"
-end
-
-# Tab completion for curr: suggest saved keywords.
-complete -c curr -f -a '(curd ls -k | string split -n " ")'
-```
-
-#### PowerShell (`$profile`)
-```powershell
-Function Get-Curd-Directory {
-  [CmdletBinding()]
-    Param($arg)
-      $content = if ($arg) {curd $arg} Else {curd}
-      Set-Location "$content"
-};Set-Alias curr Get-Curd-Directory
-
-# Tab completion for curr: suggest saved keywords.
-Register-ArgumentCompleter -CommandName Get-Curd-Directory -ParameterName arg -ScriptBlock {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-    (curd ls -k) -split '\s+' |
-        Where-Object { $_ -and $_ -like "$wordToComplete*" } |
-        ForEach-Object {
-            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
-        }
-}
-```
-
-#### csh/tcsh (`~/.cshrc` or `~/.tcshrc`)
-```csh
-alias curr 'cd "`curd \!*`"'
-
-# Tab completion for curr: suggest saved keywords (tcsh).
-complete curr 'p/1/`curd ls -k`/'
-```
-
-#### Windows Command Prompt
-Save as `curr.bat` in your PATH:
-```batch
-@echo off
-curd %* > %TEMP%\vv.tmp
-set /p VV=<%TEMP%\vv.tmp
-cd /D "%VV%"
-```
+Using Zsh, Fish, PowerShell, csh/tcsh, or the Windows Command Prompt? See the [Installation Guide](installation.html) for the equivalent setup with tab completion.
 
 ## 📖 Usage Examples
 
