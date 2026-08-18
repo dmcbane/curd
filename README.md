@@ -8,7 +8,7 @@ The name CURD?  It is one character off from curr which is the name of the origi
 
 CURD is written in [Go](https://golang.org/) so you'll need to have it installed to build it.  Once [Go is installed](https://golang.org/doc/install) and GOROOT is added to your path, the following command will install CURD.
 
-    go install github.com/dmcbane/curd/v2@v2.2.0
+    go install github.com/dmcbane/curd/v2@v2.2.1
 
 ## Integration
 
@@ -165,7 +165,7 @@ or the clean command to remove non existant paths that are defined:
 Typing `curd --help` will display the help screen for CURD which lists all available commands.
 
 ```
-CURD - Change to one of a User's Recurrent Directories 2.2.0
+CURD - Change to one of a User's Recurrent Directories 2.2.1
 H. Dale McBane<h.dale.mcbane@gmail.com>
 Save and return to paths you visit often.
 

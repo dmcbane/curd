@@ -16,7 +16,7 @@ description: Save frequently visited directories with keywords and jump to them 
     <span class="badge blue">Cross-platform</span>
     <span class="badge purple">Tab completion</span>
     <span class="badge">MIT</span>
-    <span class="badge">v2.2.0</span>
+    <span class="badge">v2.2.1</span>
   </div>
   <div class="hero-buttons">
     <a href="#quickstart" class="btn btn-primary">Get Started</a>
@@ -90,7 +90,7 @@ description: Save frequently visited directories with keywords and jump to them 
 
   <p class="code-label">1. Install CURD</p>
   <div class="code-block">
-<pre><span class="cmd">go install</span> <span class="str">github.com/dmcbane/curd/v2@v2.2.0</span>   <span class="comment"># or grab a binary from the releases page</span></pre>
+<pre><span class="cmd">go install</span> <span class="str">github.com/dmcbane/curd/v2@v2.2.1</span>   <span class="comment"># or grab a binary from the releases page</span></pre>
   </div>
 
   <p class="code-label">2. Add the curr wrapper to your shell (Bash, ~/.bashrc)</p>
@@ -125,8 +125,8 @@ description: Save frequently visited directories with keywords and jump to them 
   </div>
 
   <div class="callout">
-    <h3>&#128056; New in v2.2.0 — keyword tab completion for curr</h3>
-    <p>The <code>curr</code> integration scripts now include tab completion of your saved keywords in every supported shell, with ready-to-use <code>curr.zsh</code> and <code>curr.csh</code> scripts alongside the existing Bash, Fish, and PowerShell versions.</p>
+    <h3>&#128056; New in v2.2.1 — fish completion for curd itself</h3>
+    <p>Fish loads a completion file only when completing the command that matches its file name, so <code>curd completions fish</code> now ships install instructions for both <code>curd.fish</code> and <code>curr.fish</code>, and completes file paths after <code>--config</code> and directories after <code>--dir</code>.</p>
   </div>
 </section>
 
