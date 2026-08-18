@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Fish completion for `curd` itself. The generated fish script now completes file paths after `--config` and directories after `--dir` instead of offering nothing, and splits `curd ls -k` output with `string split -n` so empty elements are discarded.
+
+### Changed
+- The generated fish script carries an install header explaining that fish loads a completion file only when completing the command matching its file name, so it must be installed as both `curd.fish` and `curr.fish`. README, installation guide, and command reference document the two-name install, the `$SHELL` detection caveat, and how to verify with `complete -C`.
+
+### Added
+- `TestGenerateCompletions_FishIntegration` runs the generated script under a real fish shell in a throwaway `XDG_CONFIG_HOME` and asserts on `complete -C` output. Skipped when fish is not installed.
+
 ## [2.2.0] - 2026-06-26
 
 ### Added

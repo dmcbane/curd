@@ -213,12 +213,20 @@ source <(curd completions bash)
 # Zsh — install onto the fpath
 curd completions zsh > ~/.zsh/completions/_curd
 
-# Fish — install into fish's completions directory
+# Fish — install into fish's completions directory under both command names
 curd completions fish > ~/.config/fish/completions/curd.fish
+ln -sf ~/.config/fish/completions/curd.fish ~/.config/fish/completions/curr.fish
 
 # Auto-detect the current shell from $SHELL
 curd completions
 ```
+
+Fish loads a completion file only when completing the command that matches its
+file name, which is why the fish script is installed as both `curd.fish` and
+`curr.fish`.
+
+Detection reads `$SHELL`, which names your login shell. If you are typing in a
+different shell than the one `$SHELL` records, pass the shell name explicitly.
 
 ## Global Options
 

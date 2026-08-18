@@ -3,8 +3,10 @@ package execute_test
 import (
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -396,6 +398,17 @@ func TestGenerateCompletions(t *testing.T) {
 				"complete -c curr",
 				"curd completion --",
 				"curd ls -k",
+				// Keywords are joined with two spaces, so empty elements must
+				// be discarded when splitting.
+				"string split -n ' '",
+				// --config takes a file and --dir a directory; both need path
+				// completion even though the command is otherwise -f.
+				"-l config",
+				"-l dir",
+				"__fish_complete_directories",
+				// Fish autoloads a completion file by command name, so the
+				// script must document the two-name install.
+				"completions/curr.fish",
 			},
 		},
 	}
@@ -535,4 +548,153 @@ func TestBashCompletionHelper(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestGenerateCompletions_FishIntegration runs the generated fish script under
+// a real fish shell in a throwaway XDG_CONFIG_HOME and asks fish what it would
+// suggest. This is the only test that exercises the script as fish actually
+// loads it; the string assertions above cannot catch a script that parses but
+// registers nothing. It is skipped when fish is not installed.
+func TestGenerateCompletions_FishIntegration(t *testing.T) {
+	fishPath, lookErr := exec.LookPath("fish")
+	if lookErr != nil {
+		t.Skipf("fish not installed, skipping integration test: %v", lookErr)
+	}
+
+	script := captureStdout(t, func() {
+		if err := execute.GenerateCompletions("fish"); err != nil {
+			t.Fatalf("GenerateCompletions(\"fish\") returned error: %v", err)
+		}
+	})
+
+	root := t.TempDir()
+	binDir := filepath.Join(root, "bin")
+	completionsDir := filepath.Join(root, "cfg", "fish", "completions")
+	workDir := filepath.Join(root, "work")
+	for _, dir := range []string{binDir, completionsDir, workDir, filepath.Join(workDir, "subdir")} {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatalf("Failed to create %s: %v", dir, err)
+		}
+	}
+
+	// Stub curd so the test does not depend on an installed binary. It answers
+	// the two queries the completion script makes.
+	// The generic branch keys off the forwarded command line, so the test also
+	// proves the script hands the full token list to `curd completion`.
+	stub := "#!/bin/sh\n" +
+		"case \"$1\" in\n" +
+		"  ls) printf 'alpha  beta  gamma\\n' ;;\n" +
+		"  *)\n" +
+		"    case \"$*\" in\n" +
+		"      *' ls '*|*' ls') printf -- '-k --keywords-only\\n' ;;\n" +
+		"      *) printf 'clean ls list save rm remove alpha beta gamma\\n' ;;\n" +
+		"    esac ;;\n" +
+		"esac\n"
+	if err := os.WriteFile(filepath.Join(binDir, "curd"), []byte(stub), 0o755); err != nil {
+		t.Fatalf("Failed to write curd stub: %v", err)
+	}
+	// Fish only autoloads completions for a command that exists, so curr must
+	// be present on PATH for its completions to load.
+	if err := os.WriteFile(filepath.Join(binDir, "curr"), []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
+		t.Fatalf("Failed to write curr stub: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(workDir, "notes.txt"), []byte("file completion probe\n"), 0o644); err != nil {
+		t.Fatalf("Failed to write probe file: %v", err)
+	}
+
+	// Install the script under both names, as the generated header instructs.
+	for _, name := range []string{"curd.fish", "curr.fish"} {
+		if err := os.WriteFile(filepath.Join(completionsDir, name), []byte(script), 0o644); err != nil {
+			t.Fatalf("Failed to install %s: %v", name, err)
+		}
+	}
+
+	complete := func(t *testing.T, cmdline string) string {
+		t.Helper()
+		cmd := exec.Command(fishPath, "-c", "complete -C "+strconv.Quote(cmdline))
+		cmd.Dir = workDir
+		cmd.Env = append(os.Environ(),
+			"PATH="+binDir+string(os.PathListSeparator)+os.Getenv("PATH"),
+			"XDG_CONFIG_HOME="+filepath.Join(root, "cfg"),
+			"XDG_DATA_HOME="+filepath.Join(root, "data"),
+		)
+		var stderr strings.Builder
+		cmd.Stderr = &stderr
+		out, err := cmd.Output()
+		if err != nil {
+			t.Fatalf("fish complete -C %q failed: %v\nstderr: %s", cmdline, err, stderr.String())
+		}
+		return string(out)
+	}
+
+	testCases := []struct {
+		name    string
+		cmdline string
+		want    []string
+		notWant []string
+	}{
+		{
+			name:    "commands and keywords",
+			cmdline: "curd ",
+			want:    []string{"clean", "save", "remove", "alpha", "gamma"},
+			// -f must suppress fish's default file completion.
+			notWant: []string{"notes.txt"},
+		},
+		{
+			name:    "list options",
+			cmdline: "curd ls -",
+			want:    []string{"-k", "--keywords-only"},
+		},
+		{
+			name:    "config takes a file",
+			cmdline: "curd --config ",
+			want:    []string{"notes.txt", "subdir/"},
+		},
+		{
+			name:    "dir takes a directory",
+			cmdline: "curd save --dir ",
+			want:    []string{"subdir/"},
+			notWant: []string{"notes.txt"},
+		},
+		{
+			name:    "curr completes keywords",
+			cmdline: "curr ",
+			want:    []string{"alpha", "beta", "gamma"},
+			notWant: []string{"notes.txt"},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			out := complete(t, tc.cmdline)
+			// complete -C emits one candidate per line, optionally followed by
+			// a tab-separated description.
+			var got []string
+			for _, line := range strings.Split(out, "\n") {
+				if candidate := strings.SplitN(line, "\t", 2)[0]; candidate != "" {
+					got = append(got, candidate)
+				}
+			}
+			for _, want := range tc.want {
+				if !contains(got, want) {
+					t.Errorf("complete -C %q missing %q.\nGot: %v", tc.cmdline, want, got)
+				}
+			}
+			for _, notWant := range tc.notWant {
+				if contains(got, notWant) {
+					t.Errorf("complete -C %q unexpectedly offered %q.\nGot: %v", tc.cmdline, notWant, got)
+				}
+			}
+		})
+	}
+}
+
+// contains reports whether slice holds item.
+func contains(slice []string, item string) bool {
+	for _, value := range slice {
+		if value == item {
+			return true
+		}
+	}
+	return false
 }

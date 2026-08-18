@@ -97,10 +97,20 @@ echo 'source ~/.curd_completion.bash' >> ~/.bashrc
 curd completions zsh > ~/.zsh/completions/_curd
 ```
 
-**Fish:** write the script into fish's completions directory:
+**Fish:** write the script into fish's completions directory under *both* command names. Fish loads a completion file only when you complete the command matching its file name, so a lone `curd.fish` never supplies `curr`'s completions:
 
 ```fish
 curd completions fish > ~/.config/fish/completions/curd.fish
+ln -sf ~/.config/fish/completions/curd.fish ~/.config/fish/completions/curr.fish
+```
+
+Name the shell explicitly. `curd completions` with no argument detects the shell from `$SHELL`, which often still names your login shell rather than the fish session you are typing in — and would then write a bash or zsh script into fish's completions directory.
+
+Verify without pressing Tab:
+
+```fish
+complete -C 'curd '        # commands and saved keywords
+complete -C 'curd ls -'    # -k, --keywords-only, ...
 ```
 
 Both `curd` and `curr` get command, option, and keyword completion.

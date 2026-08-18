@@ -127,10 +127,28 @@ end
 complete -c curr -f -a '(curd ls -k | string split -n " ")'
 ```
 
-Optionally, generate the completion script for `curd` itself:
+The `complete` line above covers `curr` only. To complete `curd` itself, install
+the generated completion script under both command names:
 
 ```fish
 curd completions fish > ~/.config/fish/completions/curd.fish
+ln -sf ~/.config/fish/completions/curd.fish ~/.config/fish/completions/curr.fish
+```
+
+Two details are easy to trip over:
+
+- **Name the shell explicitly.** With no argument, `curd completions` reads
+  `$SHELL`, which frequently still names your login shell rather than the fish
+  session you are typing in.
+- **Install under both names.** Fish loads a completion file only when you
+  complete the command matching its file name, and only for commands that
+  exist, so `curd.fish` alone leaves `curr` uncovered.
+
+Check the result in a new shell without pressing Tab:
+
+```fish
+complete -C 'curd '        # commands and saved keywords
+complete -C 'curr '        # saved keywords
 ```
 
 ### PowerShell
